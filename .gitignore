@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.morning_paper/
+morning_scout.log
+.env
+node_modules/

@@ -1,0 +1,920 @@
+{
+  "material_date": "2026-08-21",
+  "generated_at": "2026-08-21T21:12:22.453317+08:00",
+  "seen_title_keys": [],
+  "sources": {
+    "hacker_news": {
+      "ok": true,
+      "error": null,
+      "items": [
+        {
+          "title": "AliExpress runs silent WebAudio fingerprinting that breaks Bluetooth multipoint",
+          "summary": "",
+          "url": "https://blog.laserphile.com/2026/08/aliexpress-webpage-keeping-multipoint.html",
+          "source": "Hacker News",
+          "category": "front_page",
+          "published_at": "2026-08-20T10:08:52+00:00",
+          "title_key": "aliexpressrunssilentwebaudiofingerprintingthatbreaksbluetoothmultipoint",
+          "points": 984,
+          "num_comments": 315
+        },
+        {
+          "title": "HTML Can Do That",
+          "summary": "",
+          "url": "https://chrisburnell.com/html-can-do-that/",
+          "source": "Hacker News",
+          "category": "front_page",
+          "published_at": "2026-08-19T15:11:36+00:00",
+          "title_key": "htmlcandothat",
+          "points": 894,
+          "num_comments": 201
+        },
+        {
+          "title": "I like 'em thick: an apology to my English teachers",
+          "summary": "",
+          "url": "https://www.experimental-history.com/p/i-like-em-thick",
+          "source": "Hacker News",
+          "category": "front_page",
+          "published_at": "2026-08-18T15:50:52+00:00",
+          "title_key": "ilikeemthickanapologytomyenglishteachers",
+          "points": 786,
+          "num_comments": 321
+        },
+        {
+          "title": "The August 17 outage",
+          "summary": "",
+          "url": "https://github.blog/news-insights/company-news/the-august-17-outage-and-the-work-ahead/",
+          "source": "Hacker News",
+          "category": "front_page",
+          "published_at": "2026-08-20T19:22:24+00:00",
+          "title_key": "theaugust17outage",
+          "points": 584,
+          "num_comments": 650
+        },
+        {
+          "title": "Malicious Rust crate Arrayref runs a build-time payload",
+          "summary": "https://blog.rust-lang.org/2026/08/20/supply-chain-attack-on... https://github.com/rustsec/advisory-db/issues/3161",
+          "url": "https://safedep.io/arrayref-proc-macro1-rust-build-time-malware/",
+          "source": "Hacker News",
+          "category": "front_page",
+          "published_at": "2026-08-20T13:23:12+00:00",
+          "title_key": "maliciousrustcratearrayrefrunsabuildtimepayload",
+          "points": 521,
+          "num_comments": 449
+        },
+        {
+          "title": "CIA funding helped keep NeXT afloat in the 80s",
+          "summary": "https://archive.is/JfB5V",
+          "url": "https://www.wsj.com/tech/steve-jobs-apple-next-cia-161b65f9?st=NWWds1&reflink=desktopwebshare_permalink",
+          "source": "Hacker News",
+          "category": "front_page",
+          "published_at": "2026-08-20T00:15:01+00:00",
+          "title_key": "ciafundinghelpedkeepnextafloatinthe80s",
+          "points": 427,
+          "num_comments": 257
+        },
+        {
+          "title": "I should have loved biology (2020)",
+          "summary": "",
+          "url": "https://jsomers.net/i-should-have-loved-biology/",
+          "source": "Hacker News",
+          "category": "front_page",
+          "published_at": "2026-08-20T17:50:02+00:00",
+          "title_key": "ishouldhavelovedbiology2020",
+          "points": 305,
+          "num_comments": 115
+        },
+        {
+          "title": "Linux 7.2",
+          "summary": "",
+          "url": "https://www.igalia.com/2026/08/19/Linux-72-Released.html",
+          "source": "Hacker News",
+          "category": "front_page",
+          "published_at": "2026-08-20T15:46:18+00:00",
+          "title_key": "linux72",
+          "points": 272,
+          "num_comments": 116
+        },
+        {
+          "title": "Vomit: Clean up Claude 5's token output with a separate LLM",
+          "summary": "",
+          "url": "https://github.com/zachahn/vomit",
+          "source": "Hacker News",
+          "category": "front_page",
+          "published_at": "2026-08-20T15:26:02+00:00",
+          "title_key": "vomitcleanupclaude5stokenoutputwithaseparatellm",
+          "points": 271,
+          "num_comments": 265
+        },
+        {
+          "title": "Japan tried to build an operating system for the world, the US intervened",
+          "summary": "",
+          "url": "https://www.xda-developers.com/japan-tried-build-operating-system-entire-world-us-government-intervened/",
+          "source": "Hacker News",
+          "category": "front_page",
+          "published_at": "2026-08-21T05:31:34+00:00",
+          "title_key": "japantriedtobuildanoperatingsystemfortheworldtheusintervened",
+          "points": 268,
+          "num_comments": 149
+        },
+        {
+          "title": "Stop Anthropomorphizing Intermediate Tokens as Reasoning/Thinking Traces (2025)",
+          "summary": "",
+          "url": "https://arxiv.org/abs/2504.09762",
+          "source": "Hacker News",
+          "category": "front_page",
+          "published_at": "2026-08-19T11:35:26+00:00",
+          "title_key": "stopanthropomorphizingintermediatetokensasreasoningthinkingtraces2025",
+          "points": 264,
+          "num_comments": 217
+        },
+        {
+          "title": "Why aren't smart people happier? (2022)",
+          "summary": "",
+          "url": "https://www.experimental-history.com/p/why-arent-smart-people-happier",
+          "source": "Hacker News",
+          "category": "front_page",
+          "published_at": "2026-08-20T18:38:47+00:00",
+          "title_key": "whyarentsmartpeoplehappier2022",
+          "points": 221,
+          "num_comments": 308
+        },
+        {
+          "title": "DeepSeek-v4-flash-vision-exp",
+          "summary": "",
+          "url": "https://api-docs.deepseek.com/guides/vision/",
+          "source": "Hacker News",
+          "category": "front_page",
+          "published_at": "2026-08-21T10:33:56+00:00",
+          "title_key": "deepseekv4flashvisionexp",
+          "points": 199,
+          "num_comments": 48
+        },
+        {
+          "title": "Ox Alpha",
+          "summary": "https://twitter.com/OpenRouter/status/2090544970923184269 , https://xcancel.com/OpenRouter/status/2090544970923184269",
+          "url": "https://openrouter.ai/stealth/ox-alpha",
+          "source": "Hacker News",
+          "category": "front_page",
+          "published_at": "2026-08-20T23:56:35+00:00",
+          "title_key": "oxalpha",
+          "points": 187,
+          "num_comments": 147
+        },
+        {
+          "title": "Anti-AI fonts are useless and harmful",
+          "summary": "",
+          "url": "https://blog.yaros.ae/anti-ai-fonts-are-useless-and-harmful/",
+          "source": "Hacker News",
+          "category": "front_page",
+          "published_at": "2026-08-20T15:06:53+00:00",
+          "title_key": "antiaifontsareuselessandharmful",
+          "points": 185,
+          "num_comments": 138
+        },
+        {
+          "title": "Don't paste the AI, please",
+          "summary": "",
+          "url": "https://dontpastetheai.com/",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T08:20:44+00:00",
+          "title_key": "dontpastetheaiplease",
+          "points": 1020,
+          "num_comments": 567
+        },
+        {
+          "title": "AI companies destroy physical books – let's scan rare books before it's too late",
+          "summary": "",
+          "url": "https://annas-archive.gl/blog/physical-destruction.html",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-21T02:37:47+00:00",
+          "title_key": "aicompaniesdestroyphysicalbooksletsscanrarebooksbeforeitstoolate",
+          "points": 369,
+          "num_comments": 276
+        },
+        {
+          "title": "Show HN: Huzzah – a novel approach to coding with AI",
+          "summary": "Hello everyone. I've been working on this experimental editor called Huzzah. I've been working almost exclusively with coding agents since January of this year, and over the past few months I began to feel utterly exhausted by them. They're great, but I'm finding it more and more tedious to write full sentences for every change I want. Not only that, but it seems there's a complexity limit for codebases - beyond a certain point the agent begins confusing itself. I'd like to go back to writing code, but I don't want",
+          "url": "https://www.danielvaughn.dev/posts/huzzah/",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T19:05:36+00:00",
+          "title_key": "showhnhuzzahanovelapproachtocodingwithai",
+          "points": 338,
+          "num_comments": 192
+        },
+        {
+          "title": "Mathematics in the age of AI",
+          "summary": "",
+          "url": "https://arxiv.org/abs/2608.16753",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-19T15:14:25+00:00",
+          "title_key": "mathematicsintheageofai",
+          "points": 207,
+          "num_comments": 254
+        },
+        {
+          "title": "AI companies destroy physical books – let's scan rare books before it's too late",
+          "summary": "",
+          "url": "https://annas-archive.pk/blog/physical-destruction.html",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-21T10:05:46+00:00",
+          "title_key": "aicompaniesdestroyphysicalbooksletsscanrarebooksbeforeitstoolate",
+          "points": 185,
+          "num_comments": 117
+        },
+        {
+          "title": "Copyright does not protect AI-generated content in EU",
+          "summary": "",
+          "url": "https://mathstodon.xyz/@maxpool/117128107757895678",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-21T00:15:12+00:00",
+          "title_key": "copyrightdoesnotprotectaigeneratedcontentineu",
+          "points": 180,
+          "num_comments": 193
+        },
+        {
+          "title": "AI didn't erase the junior engineer's value, it increased it it",
+          "summary": "",
+          "url": "https://franciscotrindade.me/blog/the-kids-are-really-alright/",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T11:42:20+00:00",
+          "title_key": "aididnterasethejuniorengineersvalueitincreaseditit",
+          "points": 87,
+          "num_comments": 138
+        },
+        {
+          "title": "Extensible Software in the age of LLMs",
+          "summary": "",
+          "url": "https://jeremymorrell.dev/blog/extensible-software-in-the-age-of-llms/",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-19T16:26:05+00:00",
+          "title_key": "extensiblesoftwareintheageofllms",
+          "points": 170,
+          "num_comments": 88
+        },
+        {
+          "title": "Do Chatbot LLMs Talk Too Much?",
+          "summary": "",
+          "url": "https://arxiv.org/abs/2601.00624",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T13:01:03+00:00",
+          "title_key": "dochatbotllmstalktoomuch",
+          "points": 12,
+          "num_comments": 4
+        },
+        {
+          "title": "Guess which of these LLM outputs is watermarked",
+          "summary": "",
+          "url": "https://sgoedecke.github.io/watermark-quiz/",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T14:03:58+00:00",
+          "title_key": "guesswhichofthesellmoutputsiswatermarked",
+          "points": 11,
+          "num_comments": 5
+        },
+        {
+          "title": "Ask HN: Has anyone shipped a self-modifying application with LLMs?",
+          "summary": "In the past the model for software would typically be to ship a fixed application and then if users need some custom functionality, they would need to install a plugin or create their own. For non technical users they would have to find an existing plugin or maybe it doesn't exist so they are stuck. But I can't help but think why wouldn't for example an application just have a prompt box that builds an extension dynamically on the fly (e.g. \"make me a UI panel with some buttons that does X\") Obviously it would be \"",
+          "url": "https://news.ycombinator.com/item?id=49366144",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-19T19:33:27+00:00",
+          "title_key": "askhnhasanyoneshippedaselfmodifyingapplicationwithllms",
+          "points": 10,
+          "num_comments": 13
+        },
+        {
+          "title": "Brancher un LLM sur un catalogue produit avec Django",
+          "summary": "",
+          "url": "https://tonydevweb.com/articles/brancher-llm-catalogue-produit.html",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T18:39:16+00:00",
+          "title_key": "brancherunllmsuruncatalogueproduitavecdjango",
+          "points": 8,
+          "num_comments": 2
+        },
+        {
+          "title": "Debian weighs eight options in vote on LLM usage",
+          "summary": "",
+          "url": "https://lwn.net/Articles/1087134/",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T09:39:07+00:00",
+          "title_key": "debianweighseightoptionsinvoteonllmusage",
+          "points": 7,
+          "num_comments": 1
+        },
+        {
+          "title": "Ask HN: How do you review and validate LLM generated code?",
+          "summary": "It's become very fast to generate code nowadays, but how do you review and test all of it? Every time you ask a model to review some piece of code, it comes back with different \"findings\". So, you still have to filter through the noise of their findings to get to actual defects. And if you try to do the full review manually, then it might take more time to just understand the code than writing it yourself from the beginning. As for testing, you can ask the LLM to write the tests, but you can't be sure if the tests ",
+          "url": "https://news.ycombinator.com/item?id=49378314",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T18:26:05+00:00",
+          "title_key": "askhnhowdoyoureviewandvalidatellmgeneratedcode",
+          "points": 6,
+          "num_comments": 2
+        },
+        {
+          "title": "We let $200 GPT-Pro Think for 7 days on unsolved math",
+          "summary": "",
+          "url": "https://www.youtube.com/watch?v=DBrmtjM1Mq4",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T18:51:30+00:00",
+          "title_key": "welet200gptprothinkfor7daysonunsolvedmath",
+          "points": 5,
+          "num_comments": 0
+        },
+        {
+          "title": "Replit expands access to software creation with GPT‑5.6 Luna",
+          "summary": "",
+          "url": "https://openai.com/index/replit/",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-19T21:49:38+00:00",
+          "title_key": "replitexpandsaccesstosoftwarecreationwithgpt56luna",
+          "points": 3,
+          "num_comments": 0
+        },
+        {
+          "title": "Qwen Image 3.0 Pro vs. GPT Image 2 for production image APIs",
+          "summary": "",
+          "url": "https://flaq.ai/models/alibaba/qwen-image-3-0-pro/",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-21T10:36:19+00:00",
+          "title_key": "qwenimage30provsgptimage2forproductionimageapis",
+          "points": 2,
+          "num_comments": 0
+        },
+        {
+          "title": "Gptel Emacs: Beyond Just a Chat Interface (YT)",
+          "summary": "",
+          "url": "https://www.youtube.com/watch?v=xHEnWvKmSKM",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T07:38:28+00:00",
+          "title_key": "gptelemacsbeyondjustachatinterfaceyt",
+          "points": 1,
+          "num_comments": 0
+        },
+        {
+          "title": "Show HN: BRep Geometric CAD Kernel and Parametric Code CAD",
+          "summary": "I'm pretty excited to show off something I've been working on for the past few months. A free, open-source geometric kernel that allows humans/LLMs to write code (in this case, a DSL called Firmament) and generate 3D models of CAD parts, to finally provide an alternative to OpenCascade. To get some questions out of the way. - Full STEP import/export support for AP242, AP203 and AP214 are still experimental at the time, but everything produced by Aetheris should open in any CAD app with STEP support. - Support for s",
+          "url": "https://github.com/yuechen-li-dev/Aetheris/",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-19T15:09:57+00:00",
+          "title_key": "showhnbrepgeometriccadkernelandparametriccodecad",
+          "points": 2,
+          "num_comments": 0
+        },
+        {
+          "title": "Google has stopped pushing Git tags for some Android source code",
+          "summary": "",
+          "url": "https://grapheneos.social/@GrapheneOS/117057099753905023",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-19T17:47:29+00:00",
+          "title_key": "googlehasstoppedpushinggittagsforsomeandroidsourcecode",
+          "points": 807,
+          "num_comments": 328
+        },
+        {
+          "title": "Rick Scott Walked Away from $1.7B Health Care Fraud Case, Then Got a Senate Seat",
+          "summary": "",
+          "url": "https://www.uncensoredobjection.com/p/senator-rick-scott-walked-away-from",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-19T22:52:03+00:00",
+          "title_key": "rickscottwalkedawayfrom17bhealthcarefraudcasethengotasenateseat",
+          "points": 60,
+          "num_comments": 1
+        },
+        {
+          "title": "Hacking with Claude on a $27 smart watch",
+          "summary": "",
+          "url": "https://www.mikekasberg.com/blog/2026/08/19/hacking-with-claude-on-a-27-smart-watch.html",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T14:08:09+00:00",
+          "title_key": "hackingwithclaudeona27smartwatch",
+          "points": 100,
+          "num_comments": 55
+        },
+        {
+          "title": "I am morally opposed to updating my Claude.md",
+          "summary": "",
+          "url": "https://alex-jacobs.com/posts/claudemd/",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T15:47:48+00:00",
+          "title_key": "iammorallyopposedtoupdatingmyclaudemd",
+          "points": 29,
+          "num_comments": 27
+        },
+        {
+          "title": "Claude \"warning\" users about language and defending business influencers",
+          "summary": "",
+          "url": "https://twitter.com/MatznerJon/status/2090157152690196754",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T18:16:50+00:00",
+          "title_key": "claudewarningusersaboutlanguageanddefendingbusinessinfluencers",
+          "points": 15,
+          "num_comments": 3
+        },
+        {
+          "title": "Claude Code adds new \"concise\" output style setting",
+          "summary": "",
+          "url": "https://twitter.com/ClaudeDevs/status/2090245922685063634",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T01:49:57+00:00",
+          "title_key": "claudecodeaddsnewconciseoutputstylesetting",
+          "points": 11,
+          "num_comments": 0
+        },
+        {
+          "title": "Claude Opus 4.6 returned nothing 900/900 times. Should agents retry?",
+          "summary": "",
+          "url": "https://zenodo.org/records/21696066",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-21T07:33:12+00:00",
+          "title_key": "claudeopus46returnednothing900900timesshouldagentsretry",
+          "points": 5,
+          "num_comments": 1
+        },
+        {
+          "title": "Show HN: Epho – run Claude Code with a curl",
+          "summary": "Hey folks, Burak here. Epho is an API that allows running Claude Code, Codex or Opencode in a sandbox in the cloud. It abstracts away sandboxes, and allows running coding agents with a single HTTP request. Epho came out of our own struggles with building our own AI analyst: - Sandboxes give you bare machines; you need to configure them for agentic workloads. - Each agent behaves differently, and you need to build integrations with each of them. - Sandbox providers are not very reliable, which means you need to figu",
+          "url": "https://epho.io",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T15:45:51+00:00",
+          "title_key": "showhnephorunclaudecodewithacurl",
+          "points": 5,
+          "num_comments": 0
+        },
+        {
+          "title": "Show HN: Turning websites into micro CLIs for Claude Code to save on tokens",
+          "summary": "",
+          "url": "https://github.com/only-cli/oc",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-19T21:26:15+00:00",
+          "title_key": "showhnturningwebsitesintomicroclisforclaudecodetosaveontokens",
+          "points": 4,
+          "num_comments": 2
+        },
+        {
+          "title": "OpenAI's Unraveling Has Begun",
+          "summary": "",
+          "url": "https://garymarcus.substack.com/p/breaking-openais-unraveling-has-begun",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-19T21:00:57+00:00",
+          "title_key": "openaisunravelinghasbegun",
+          "points": 28,
+          "num_comments": 11
+        },
+        {
+          "title": "OpenAI 'will be a public company in 2027' or sooner, CFO Friar tells employees",
+          "summary": "",
+          "url": "https://www.cnbc.com/2026/08/19/open-ai-ipo-timing-2027-friar.html",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-19T19:42:35+00:00",
+          "title_key": "openaiwillbeapubliccompanyin2027orsoonercfofriartellsemployees",
+          "points": 20,
+          "num_comments": 2
+        },
+        {
+          "title": "OpenAI is becoming a surveillance company",
+          "summary": "",
+          "url": "https://garymarcus.substack.com/p/openai-is-becoming-a-surveillance",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-21T10:45:21+00:00",
+          "title_key": "openaiisbecomingasurveillancecompany",
+          "points": 6,
+          "num_comments": 1
+        },
+        {
+          "title": "OpenAI Is Backing Away from Reddit as Reddit Tries to Become OpenAI?",
+          "summary": "",
+          "url": "https://gizmodo.com/openai-is-backing-away-from-reddit-as-reddit-tries-to-become-openai-2000800060",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-21T05:49:37+00:00",
+          "title_key": "openaiisbackingawayfromredditasreddittriestobecomeopenai",
+          "points": 6,
+          "num_comments": 1
+        },
+        {
+          "title": "Run GLM-OCR, DeepSeek-OCR-2, Dots.mocr with an OpenAI Compatible API",
+          "summary": "",
+          "url": "https://www.vlm.run/product/gateway",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-19T18:49:17+00:00",
+          "title_key": "runglmocrdeepseekocr2dotsmocrwithanopenaicompatibleapi",
+          "points": 6,
+          "num_comments": 1
+        },
+        {
+          "title": "OpenAI's Rogue AI Agent Hacked More Than Just Hugging Face",
+          "summary": "",
+          "url": "https://www.wired.com/story/openais-rogue-ai-agent-hacked-more-than-just-hugging-face/",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T18:58:25+00:00",
+          "title_key": "openaisrogueaiagenthackedmorethanjusthuggingface",
+          "points": 5,
+          "num_comments": 1
+        },
+        {
+          "title": "OpenAI Offering Zero Data Retention for Frontier Models",
+          "summary": "",
+          "url": "https://openai.com/index/offering-zero-data-retention-for-frontier-models/",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-19T19:55:41+00:00",
+          "title_key": "openaiofferingzerodataretentionforfrontiermodels",
+          "points": 5,
+          "num_comments": 0
+        },
+        {
+          "title": "Anthropic Expects to Match SpaceX's Record IPO Size or Top It",
+          "summary": "",
+          "url": "https://www.bloomberg.com/news/articles/2026-08-20/anthropic-expects-to-match-spacex-s-record-ipo-size-or-top-it",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T18:39:42+00:00",
+          "title_key": "anthropicexpectstomatchspacexsrecordiposizeortopit",
+          "points": 8,
+          "num_comments": 0
+        },
+        {
+          "title": "Anthropic Plans to Change Data Retention Policy for Advanced AI",
+          "summary": "",
+          "url": "https://www.bloomberg.com/news/articles/2026-08-20/anthropic-plans-to-change-data-retention-policy-for-advanced-ai",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-21T09:03:10+00:00",
+          "title_key": "anthropicplanstochangedataretentionpolicyforadvancedai",
+          "points": 3,
+          "num_comments": 0
+        },
+        {
+          "title": "Is AI spend on OpenAI or Anthropic starting to eat into your runway?",
+          "summary": "",
+          "url": "https://rails-agent.com/",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T22:23:16+00:00",
+          "title_key": "isaispendonopenaioranthropicstartingtoeatintoyourrunway",
+          "points": 2,
+          "num_comments": 0
+        },
+        {
+          "title": "No, Anthropic Won't Be the Only Company Left",
+          "summary": "",
+          "url": "https://forwardfuture.com/newsletter/originals/no-anthropic-won-t-be-the-only-company-left",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T16:14:29+00:00",
+          "title_key": "noanthropicwontbetheonlycompanyleft",
+          "points": 2,
+          "num_comments": 0
+        },
+        {
+          "title": "Round Hill Music Sues Suno and Anthropic for $1B over AI Training Data",
+          "summary": "",
+          "url": "https://www.gadgetreview.com/round-hill-music-sues-suno-and-anthropic-for-1-billion-over-ai-training-data",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T00:40:14+00:00",
+          "title_key": "roundhillmusicsuessunoandanthropicfor1boveraitrainingdata",
+          "points": 2,
+          "num_comments": 0
+        },
+        {
+          "title": "OpenAI previews zero-retention safety system as Anthropic requires data logs",
+          "summary": "",
+          "url": "https://www.axios.com/2026/08/19/openai-previews-zero-retention-safety-system-as-anthropic-requires-data-logs",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-19T17:08:03+00:00",
+          "title_key": "openaipreviewszeroretentionsafetysystemasanthropicrequiresdatalogs",
+          "points": 2,
+          "num_comments": 0
+        },
+        {
+          "title": "Show HN: Budget Guard – a hard daily cap for your OpenAI/Anthropic bill",
+          "summary": "",
+          "url": "https://github.com/kimbeomgyu/budget-guard",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-19T13:41:15+00:00",
+          "title_key": "showhnbudgetguardaharddailycapforyouropenaianthropicbill",
+          "points": 1,
+          "num_comments": 1
+        },
+        {
+          "title": "India Country Brief: The Anthropic Economic Index",
+          "summary": "",
+          "url": "https://www.anthropic.com/research/india-brief-economic-index",
+          "source": "Hacker News",
+          "category": "ai_keyword",
+          "published_at": "2026-08-20T10:04:12+00:00",
+          "title_key": "indiacountrybrieftheanthropiceconomicindex",
+          "points": 1,
+          "num_comments": 0
+        }
+      ]
+    },
+    "lobsters": {
+      "ok": true,
+      "error": null,
+      "items": [
+        {
+          "title": "Btrfs Snapshot Integration in KDE",
+          "summary": "",
+          "url": "https://bharadwajraju.com/posts/btrfs-snapshots-in-kde/",
+          "source": "lobste.rs",
+          "category": "lobsters_hottest",
+          "published_at": "2026-08-21T05:14:08.765000+00:00",
+          "title_key": "btrfssnapshotintegrationinkde",
+          "score": 29,
+          "comments_url": "https://lobste.rs/s/umey8v/btrfs_snapshot_integration_kde",
+          "tags": [
+            "linux",
+            "osdev"
+          ]
+        },
+        {
+          "title": "Announcing Rust 1.98.0",
+          "summary": "",
+          "url": "https://blog.rust-lang.org/2026/08/20/Rust-1.98.0/",
+          "source": "lobste.rs",
+          "category": "lobsters_hottest",
+          "published_at": "2026-08-21T00:38:21.813000+00:00",
+          "title_key": "announcingrust1980",
+          "score": 39,
+          "comments_url": "https://lobste.rs/s/hbjeir/announcing_rust_1_98_0",
+          "tags": [
+            "release",
+            "rust"
+          ]
+        },
+        {
+          "title": "I accidentally logged hundreds of thousands of phone calls to military bases",
+          "summary": "",
+          "url": "https://lina.sh/blog/hijacking-e164-arpa",
+          "source": "lobste.rs",
+          "category": "lobsters_hottest",
+          "published_at": "2026-08-21T12:05:00.528000+00:00",
+          "title_key": "iaccidentallyloggedhundredsofthousandsofphonecallstomilitarybases",
+          "score": 18,
+          "comments_url": "https://lobste.rs/s/dyswyz/i_accidentally_logged_hundreds",
+          "tags": [
+            "security"
+          ]
+        },
+        {
+          "title": "Better Batteries",
+          "summary": "",
+          "url": "https://matklad.github.io/2026/08/20/better-batteries.html",
+          "source": "lobste.rs",
+          "category": "lobsters_hottest",
+          "published_at": "2026-08-21T07:47:50.174000+00:00",
+          "title_key": "betterbatteries",
+          "score": 17,
+          "comments_url": "https://lobste.rs/s/qxvz7f/better_batteries",
+          "tags": [
+            "plt",
+            "programming"
+          ]
+        },
+        {
+          "title": "Everyone Says Assembly Is Untyped—Everyone Is Wrong",
+          "summary": "",
+          "url": "https://www.gingerbill.org/article/2026/08/20/designing-odins-inline-asm/",
+          "source": "lobste.rs",
+          "category": "lobsters_hottest",
+          "published_at": "2026-08-20T17:22:35.131000+00:00",
+          "title_key": "everyonesaysassemblyisuntypedeveryoneiswrong",
+          "score": 57,
+          "comments_url": "https://lobste.rs/s/wphnca/everyone_says_assembly_is_untyped",
+          "tags": [
+            "assembly",
+            "plt"
+          ]
+        },
+        {
+          "title": "Bun 1.4",
+          "summary": "",
+          "url": "https://bun.com/blog/bun-v1.4",
+          "source": "lobste.rs",
+          "category": "lobsters_hottest",
+          "published_at": "2026-08-20T14:37:52.628000+00:00",
+          "title_key": "bun14",
+          "score": 66,
+          "comments_url": "https://lobste.rs/s/eesu8d/bun_1_4",
+          "tags": [
+            "javascript",
+            "vibecoding"
+          ]
+        },
+        {
+          "title": "How a joke domain purchase turned into geopolitical warfare",
+          "summary": "",
+          "url": "https://sprocketfox.io/xssfox/2026/08/19/sondehub-and-war/",
+          "source": "lobste.rs",
+          "category": "lobsters_hottest",
+          "published_at": "2026-08-20T12:21:41.581000+00:00",
+          "title_key": "howajokedomainpurchaseturnedintogeopoliticalwarfare",
+          "score": 118,
+          "comments_url": "https://lobste.rs/s/sfi9te/how_joke_domain_purchase_turned_into",
+          "tags": [
+            "security"
+          ]
+        },
+        {
+          "title": "Supply chain attack on arrayref",
+          "summary": "",
+          "url": "https://blog.rust-lang.org/2026/08/20/supply-chain-attack-on-arrayref/",
+          "source": "lobste.rs",
+          "category": "lobsters_hottest",
+          "published_at": "2026-08-20T09:54:06.012000+00:00",
+          "title_key": "supplychainattackonarrayref",
+          "score": 80,
+          "comments_url": "https://lobste.rs/s/dns8du/supply_chain_attack_on_arrayref",
+          "tags": [
+            "rust",
+            "security"
+          ]
+        },
+        {
+          "title": "AliExpress keeps multipoint Bluetooth headphones active with WebAudio fingerprinting",
+          "summary": "",
+          "url": "https://blog.laserphile.com/2026/08/aliexpress-webpage-keeping-multipoint.html",
+          "source": "lobste.rs",
+          "category": "lobsters_hottest",
+          "published_at": "2026-08-20T12:57:51.671000+00:00",
+          "title_key": "aliexpresskeepsmultipointbluetoothheadphonesactivewithwebaudiofingerprinting",
+          "score": 42,
+          "comments_url": "https://lobste.rs/s/b0olmy/aliexpress_keeps_multipoint_bluetooth",
+          "tags": [
+            "browsers",
+            "privacy"
+          ]
+        },
+        {
+          "title": "What Zig felt like, coming from Rust",
+          "summary": "",
+          "url": "https://besok.github.io/posts/what-zig-felt-like-coming-from-rust/",
+          "source": "lobste.rs",
+          "category": "lobsters_hottest",
+          "published_at": "2026-08-20T07:53:17.055000+00:00",
+          "title_key": "whatzigfeltlikecomingfromrust",
+          "score": 64,
+          "comments_url": "https://lobste.rs/s/oaybfe/what_zig_felt_like_coming_from_rust",
+          "tags": [
+            "rust",
+            "vibecoding",
+            "zig"
+          ]
+        },
+        {
+          "title": "Open-sourcing OpenPubkey SSH (OPKSSH): integrating single sign-on with SSH",
+          "summary": "",
+          "url": "https://www.ethanheilman.com/x/33/index.html",
+          "source": "lobste.rs",
+          "category": "lobsters_hottest",
+          "published_at": "2026-08-20T15:24:43.059000+00:00",
+          "title_key": "opensourcingopenpubkeysshopksshintegratingsinglesignonwithssh",
+          "score": 15,
+          "comments_url": "https://lobste.rs/s/n7kpm6/open_sourcing_openpubkey_ssh_opkssh",
+          "tags": [
+            "cryptography",
+            "security",
+            "web"
+          ]
+        },
+        {
+          "title": "Zero-Knowledge Proofs Aren’t Age Verification Silver Bullets",
+          "summary": "",
+          "url": "https://www.eff.org/deeplinks/2026/08/zkps-arent-age-verification-silver-bullets",
+          "source": "lobste.rs",
+          "category": "lobsters_hottest",
+          "published_at": "2026-08-20T20:48:12.124000+00:00",
+          "title_key": "zeroknowledgeproofsarentageverificationsilverbullets",
+          "score": 14,
+          "comments_url": "https://lobste.rs/s/yigyaq/zero_knowledge_proofs_aren_t_age",
+          "tags": [
+            "cryptography",
+            "privacy"
+          ]
+        },
+        {
+          "title": "Vibe coding personal apps in mid-2026",
+          "summary": "",
+          "url": "https://www.flourish.org/2026/08/personal-apps/",
+          "source": "lobste.rs",
+          "category": "lobsters_hottest",
+          "published_at": "2026-08-21T07:16:33.318000+00:00",
+          "title_key": "vibecodingpersonalappsinmid2026",
+          "score": 8,
+          "comments_url": "https://lobste.rs/s/vvdveb/vibe_coding_personal_apps_mid_2026",
+          "tags": [
+            "vibecoding"
+          ]
+        },
+        {
+          "title": "The road to ACID transactions in Cassandra 6",
+          "summary": "",
+          "url": "https://theconsensus.dev/p/2026/08/16/transactions-in-cassandra.html",
+          "source": "lobste.rs",
+          "category": "lobsters_hottest",
+          "published_at": "2026-08-21T12:08:34.779000+00:00",
+          "title_key": "theroadtoacidtransactionsincassandra6",
+          "score": 2,
+          "comments_url": "https://lobste.rs/s/c9xng0/road_acid_transactions_cassandra_6",
+          "tags": [
+            "databases",
+            "distributed",
+            "java"
+          ]
+        },
+        {
+          "title": "What are you doing this weekend?",
+          "summary": "Feel free to tell what you plan on doing this weekend and even ask for help or feedback. Please keep in mind it’s more than OK to do nothing at all too!",
+          "url": "https://lobste.rs/s/ittn74/what_are_you_doing_this_weekend",
+          "source": "lobste.rs",
+          "category": "lobsters_hottest",
+          "published_at": "2026-08-21T11:47:03.677000+00:00",
+          "title_key": "whatareyoudoingthisweekend",
+          "score": 3,
+          "comments_url": "https://lobste.rs/s/ittn74/what_are_you_doing_this_weekend",
+          "tags": [
+            "ask",
+            "programming"
+          ]
+        }
+      ]
+    },
+    "douban": {
+      "ok": false,
+      "error": "人机之恋小组：豆瓣小组页面解析不出帖子，可能改版或被拦截",
+      "items": []
+    },
+    "x_syndication": {
+      "ok": true,
+      "error": null,
+      "items": [
+        {
+          "title": "OpenRouter 的推文",
+          "summary": "🥷 New stealth model: Ox Alpha Ox Alpha is a frontier model built for efficient coding, sustained agentic work, and real-world production use. - 1M token context window - Text, image, and video input Try it now and share feedback to improve the model! https://t.co/tU5lmZrO5z",
+          "url": "https://x.com/i/status/2090544970923184269",
+          "source": "X",
+          "category": "x_syndication",
+          "published_at": "2026-08-20T21:02:16+00:00",
+          "title_key": "openrouter的推文"
+        },
+        {
+          "title": "Jon Matzner 的推文",
+          "summary": "I’ve FINALLY HAD ENOUGH with Claude morally lecturing me. I’m canceling ASAP. https://t.co/oOiSFmjntt",
+          "url": "https://x.com/i/status/2090157152690196754",
+          "source": "X",
+          "category": "x_syndication",
+          "published_at": "2026-08-19T19:21:13+00:00",
+          "title_key": "jonmatzner的推文"
+        },
+        {
+          "title": "ClaudeDevs 的推文",
+          "summary": "You can now set Claude Code's output style to Concise. Claude leads with the result, keeps responses short, and still gives full detail when you ask. Turn it on in /config → Output style, or set \"outputStyle\": \"Concise\" in settings.json. https://t.co/XYg7bHeVT2",
+          "url": "https://x.com/i/status/2090245922685063634",
+          "source": "X",
+          "category": "x_syndication",
+          "published_at": "2026-08-20T01:13:57+00:00",
+          "title_key": "claudedevs的推文"
+        }
+      ]
+    }
+  }
+}

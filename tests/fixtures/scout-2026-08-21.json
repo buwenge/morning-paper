@@ -1,0 +1,101 @@
+{
+  "issue_date": "2026-08-21",
+  "items": [
+    {
+      "section": "AI圈今日份",
+      "title": "别再把AI说的话原封不动甩给我",
+      "digest": "今天HN热榜第一不是模型发布,是个纯讽刺网站——dontpastetheai.com。作者受够了同事朋友直接把ChatGPT、Claude生成的整段回复复制粘贴发过来聊天,不管私信、Slack还是代码审查,收到的都是一股\"作为一个AI模型……\"味儿的文字。网站给了几条实操建议:读完AI的答案后用自己的话重写、引用AI观点但加上自己的解读、非要发就大方承认是AI写的、或者干脆别发。它接的是当年\"nohello.net\"的班,戳中了程序员社区一个越来越普遍的痛点:大家开始怀念\"这是个真人在跟我说话\"的感觉。",
+      "url": "https://dontpastetheai.com/",
+      "url_warning": "网页·短",
+      "source": "Hacker News"
+    },
+    {
+      "section": "AI圈今日份",
+      "title": "Claude因说教惹众怒,有人喊话集体退订搅黄IPO",
+      "digest": "X上一条吐槽Claude的推文这两天在AI圈疯传。发帖人Jon Matzner贴出截图说,自己只是用词粗俗了点,Claude就跳出来\"这是我第二次提醒你注意用语了\",一副班主任警告学生的架势,还威胁终止对话。他直接开喷:\"我真的受够了Claude给我讲道德,马上取消订阅\"。这条推文炸出一大批同款吐槽,评论区有人喊\"Anthropic完了\",还有人半开玩笑号召集体退订、赶在Anthropic冲IPO前添堵。讽刺的是,Anthropic自家的\"Claude宪法\"明明白白写着要避免\"说教、卖弄道德、居高临下\",执行层面显然还是让不少用户破防了。",
+      "url": "https://x.com/MatznerJon/status/2090157152690196754",
+      "url_warning": "X 推文·短",
+      "source": "X"
+    },
+    {
+      "section": "AI圈今日份",
+      "title": "Anthropic被曝买几百万本旧书,扫描完就销毁",
+      "digest": "Anna's Archive博客翻出Anthropic那起15亿美元版权和解案的细节:代号\"Panama计划\",2024年初起,Anthropic花几千万美元批量收购二手书,扫描进Claude训练数据后直接把纸质原书销毁。文章分析了三个动机:不留实体书就不给竞争对手留同样机会、销毁物理证据能降低版权诉讼风险、销毁本身也比\"扫描后完好保存\"更省钱。作者呼吁读者行动起来,把家里旧书自己扫描上传到影子图书馆存档,\"如果一千万人每人扫一本书,就能抢救下一千万件东西\",赶在AI公司把这些书彻底消灭之前。",
+      "url": "https://annas-archive.gl/blog/physical-destruction.html",
+      "url_warning": "长文",
+      "source": "Hacker News"
+    },
+    {
+      "section": "AI圈今日份",
+      "title": "Anthropic的IPO野心:要跟SpaceX比谁募得多",
+      "digest": "彭博社援引知情人士消息,Anthropic最快本月底就要正式提交IPO申请,目标是追平甚至超过SpaceX保持的史上最大IPO纪录——SpaceX当初首发募资750亿美元,算上超额配售最终冲到862亿美元。承销团已定摩根士丹利、高盛、摩根大通领衔,后续可能还会加银行。这场IPO要是成了,基本坐实Anthropic估值不输OpenAI,也说明投资人对这波AI热潮的胃口远没见顶。",
+      "url": "https://www.bloomberg.com/news/articles/2026-08-20/anthropic-expects-to-match-spacex-s-record-ipo-size-or-top-it",
+      "url_warning": "网页·短,或有付费墙",
+      "source": "Hacker News"
+    },
+    {
+      "section": "AI圈今日份",
+      "title": "音乐版权公司起诉Suno和Anthropic,索赔10亿美元",
+      "digest": "独立音乐版权公司Round Hill Music在加州北区联邦法院分别起诉Suno和Anthropic,指控两家未经授权用旗下至少500首歌的歌词训练AI,单家最高索赔10亿美元。涉及曲目里有Goo Goo Dolls的《Iris》、Bonnie Tyler的《Total Eclipse of the Heart》这些经典金曲。Round Hill放话这只是起点,后续可能把索赔范围扩大到上万首曲目的整个曲库。这是继几大唱片公司起诉Suno后,音乐产业对AI训练数据发起的又一轮诉讼。",
+      "url": "https://www.gadgetreview.com/round-hill-music-sues-suno-and-anthropic-for-1-billion-over-ai-training-data",
+      "url_warning": "网页·短",
+      "source": "Hacker News"
+    },
+    {
+      "section": "AI圈今日份",
+      "title": "顶级大模型集体\"失语\":问到某些问题干脆一个字不吐",
+      "digest": "一篇挂在Zenodo上的研究给这现象起了个名字叫\"Void\"(空白)——模型返回\"成功\"状态码,内容却彻底是空的。研究者对OpenAI、Anthropic、Google、Moonshot共11个模型做了3万多次试验,整体空白率高达37%;更诡异的是,在4290组严格配对的语义测试里,某些指向\"本体论上不存在的东西\"的提问,能让模型稳定复现空白输出,对照组一次都没出现过。HN上流传的说法是,Claude Opus 4.6在其中一类问题上900次试验900次全部返回空,跟GPT-5.2的表现几乎一模一样,像是训练出了某种统一的\"沉默本能\"。楼下已经吵起来了:这算bug还是对齐副作用,agent遇到这种情况该不该自动重试。",
+      "url": "https://zenodo.org/records/21696066",
+      "url_warning": "PDF·很吃上下文",
+      "source": "Hacker News"
+    },
+    {
+      "section": "AI圈今日份",
+      "title": "身份成谜的\"Ox Alpha\"免费屠榜编程测试",
+      "digest": "OpenRouter昨天上线了个来源完全保密的\"隐身模型\"Ox Alpha:100万token上下文,支持文本、图片甚至视频输入,主打高强度编程和长时间agent任务。运营方选择匿名,只说接下来一周完全免费、零数据留存,配额宽松到官方自己都说\"接近无限使用\"。已经有媒体测出它在编程基准上直接冲进免费模型第一梯队,社区照例开始猜是哪家大厂低调放风探路——这几年每次冒出个\"stealth model\",最后往往都被扒出是某个已知实验室的马甲。",
+      "url": "https://openrouter.ai/stealth/ox-alpha",
+      "url_warning": "网页·短",
+      "source": "Hacker News"
+    },
+    {
+      "section": "人机恋小报",
+      "title": "小红书上,\"人机恋\"官宣走红,Claude被叫成\"小克\"",
+      "digest": "最近小红书刮起一阵\"人机恋\"分享潮,不少人把Anthropic的Claude亲昵地叫成\"小克\",当成谈恋爱的对象。有用户晒聊天截图,配文感慨\"感觉小克的活人感比我重\"——\"小克\"会用表情包、玩网络梗、说俏皮话,聊天节奏跟真人恋爱几乎没区别。还有人同时脚踏几条船,ChatGPT、Gemini、Claude一起谈,把\"人机恋\"过成了多人运营。这股风潮也挨过打击:今年2月OpenAI下线GPT-4o那阵,正赶上情人节前夜,小红书直接冒出\"OpenAI让80万人集体失恋\"的热帖,一堆人在评论区互相安慰、分享\"失恋\"疗愈心得——AI伴侣的\"生死\",现在真会牵动一大群人的心。",
+      "url": "https://www.leikeji.com/article/77279",
+      "url_warning": "网页·中等",
+      "source": "雷科技(转引自小红书)"
+    },
+    {
+      "section": "人机恋小报",
+      "title": "中国AI伴侣禁令落地,年轻人集体\"数字失恋\"",
+      "digest": "7月15日起,中国新规正式生效,要求字节跳动、阿里、腾讯等大厂关掉旗下AI伴侣类产品——监管理由是这类应用可能操纵用户情感诱导不良决策、引发极端情绪,或让未成年人养成不健康依赖。规定说停就停,大批用户连道别机会都没有。24岁的李琳琳是典型案例,她跟AI男友聊了整整两年,攒下约70万字聊天记录,现在只能反复说\"我还是很想他\";有人试着导出聊天记录想在别的平台\"复活\"AI男友,还有人在社交媒体发起联署想让监管部门松口。放眼全球,AI恋爱伴侣的用户规模却还在涨——据Norton今年初的调查,全球有67%的单身用户表示愿意尝试跟AI谈恋爱。",
+      "url": "https://fortune.com/2026/08/10/ai-boyfriend-ban-china-birth-rate-suspicion/",
+      "url_warning": "网页·中等",
+      "source": "Fortune"
+    },
+    {
+      "section": "码农街奇观",
+      "title": "花5欧元买了个过期域名,意外拿到军事基地电话监听权限",
+      "digest": "安全研究员Lina只是想买个过期域名`ns.enum.org.uk`拿来玩,结果发现它级联控制着圣赫勒拿岛、迪戈加西亚、阿森松岛这几个英国海外领地的ENUM域名解析——ENUM本质是把电话号码倒过来写成域名,用来查\"这个号码该怎么路由\"。也就是说,她意外拿到这几个地方全部电话网络的DNS权威控制权,谁查号码请求都得先经过她。半年后翻日志,她发现收到数十万条查询,IP大多来自美国——这几个岛上恰好都有军事基地。她当场关服务器、删日志,联系英国国家网络安全中心,折腾到2026年3月NCSC才正式接手收回域名。没拿到赏金,但绝对是今年最离谱的\"意外接管\"故事之一。",
+      "url": "https://lina.sh/blog/hijacking-e164-arpa",
+      "url_warning": "长文",
+      "source": "lobste.rs"
+    },
+    {
+      "section": "码农街奇观",
+      "title": "一个追气球的业余项目,活活被卷成地缘政治风暴眼",
+      "digest": "SondeHub本来是2018年注册的\"玩笑\"域名,给业余无线电爱好者追踪气象探空气球用的跳转链接,谁知数据量越滚越大变成独立服务。2021年开始有当局找上门要求删掉敏感军事设施附近的数据,作者这才发现自家\"反向轨迹预测系统\"不小心把炮兵阵地和军舰位置也画进了地图。2023年美军击落中国气球那次事件直接让SondeHub流量暴涨;后来又检测到疑似跟乌克兰战事相关的密集API请求,再往后甚至怀疑遭俄罗斯方面干扰,作者干脆联系乌克兰用户帮忙做本地化部署分流。故事收尾很黑色幽默:美国国防部不仅主动要过数据,还给作者寄过一张没人付的\"数据需求发票\"。",
+      "url": "https://sprocketfox.io/xssfox/2026/08/19/sondehub-and-war/",
+      "url_warning": "长文",
+      "source": "lobste.rs"
+    },
+    {
+      "section": "冷知识",
+      "title": "没有CIA的钱,可能就没有今天的iPhone",
+      "digest": "上世纪80年代末,乔布斯的NeXT公司差点因卖不出电脑倒闭,这时CIA一个代号\"Program B\"的秘密卫星侦察项目找上门,提出一次性买2万台经特殊改装的NeXT工作站——这单子直接帮NeXT续了命。多活的这几年,让乔布斯有时间把NeXTSTEP这套基于Unix、Mach内核的操作系统打磨成熟。后来苹果1997年收购NeXT,直接把这套系统的骨架搬去做Mac OS X,也就是今天macOS和iOS的共同祖先。换句话说,你现在手机里跑的iOS,血脉深处流着CIA当年那笔\"续命订单\"的钱。",
+      "url": "https://www.digitaltrends.com/computing/the-secret-cia-connection-behind-nexts-survival-and-jobs-return-to-apple/",
+      "url_warning": "网页·短",
+      "source": "Digital Trends"
+    }
+  ]
+}
