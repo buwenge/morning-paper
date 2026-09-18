@@ -429,6 +429,16 @@ def _seen_title_keys() -> list[str]:
     return [key for key in keys if key]
 
 
+def _recent_coverage(now: datetime) -> list[dict]:
+    try:
+        return morning_paper.recent_coverage(now.astimezone(BIZ_TZ).date())
+    except Exception as exc:
+        # 只读最近几份草稿文件，故障也不该拖累采集本身——同一条防线约定见
+        # 上面 _seen_title_keys 与第2段 morning_feedback 的处理。
+        logging.warning("晨报采集读取近期报道回顾失败，按空清单处理：%s", exc)
+        return []
+
+
 def collect_material(now: datetime) -> dict:
     sources: dict[str, dict] = {}
     all_items: list[dict] = []
@@ -475,6 +485,7 @@ def collect_material(now: datetime) -> dict:
         "material_date": business_date.isoformat(),
         "generated_at": now.isoformat(),
         "seen_title_keys": _seen_title_keys(),
+        "recent_coverage": _recent_coverage(now),
         "sources": sources,
     }
     if feedback_block:

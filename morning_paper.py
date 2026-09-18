@@ -29,7 +29,7 @@ import re
 import tempfile
 import threading
 import urllib.parse
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 
@@ -71,6 +71,12 @@ _CLEAN_CEILING = 10_000
 # S3 改造后本模块自身不再联网抓取，但常量仍要保留供那边导入，不能删。
 MAX_FETCH_BYTES = 2_000_000
 SEEN_LIMIT = 180
+# 给冲浪班参考的"最近写过什么"人类可读清单：只看最近几个自然日，摘要截
+# 到这么多字——够冲浪班自己判断"这是不是同一件事换了个说法"，不用囤太
+# 长（9/19 追踪去重排查提炼，`seen_title_keys` 归一化指纹覆盖了全部历史
+# 但不好读，这个清单反过来只挑最近几天、但保留可读的标题+摘要）。
+RECENT_COVERAGE_DAYS = 3
+RECENT_COVERAGE_DIGEST_CHARS = 80
 
 ARCHIVE_DIRNAME = "archive"
 ARCHIVE_MANIFEST_NAME = "manifest.json"
@@ -206,7 +212,14 @@ def _canonical_url(value: object) -> str:
     kept_query = []
     for key, val in urllib.parse.parse_qsl(parsed.query, keep_blank_values=True):
         lowered = key.lower()
-        if lowered.startswith("utm_") or lowered in {"at_medium", "at_campaign", "ref", "ref_src"}:
+        # spm/_spm_id/spm_id_from 是豆瓣等站点的分享来源追踪参数，同一篇帖
+        # 子转发几次就能拼出好几个不同的查询串（9/19 撞过：同一条豆瓣帖子
+        # 两天各带了不同的 _spm_id，url_hash 因此没认出是同一条，见追踪去
+        # 重那次排查），跟 utm_* 一样只当噪音剥掉，不影响指向同一篇内容。
+        if lowered.startswith("utm_") or lowered in {
+            "at_medium", "at_campaign", "ref", "ref_src",
+            "spm", "spm_id_from", "_spm_id",
+        }:
             continue
         kept_query.append((key, val))
     return urllib.parse.urlunsplit(
@@ -316,8 +329,14 @@ def _load_archive_lookup(manifest_path: Path) -> dict[str, str]:
     return {entry["title_key"]: entry["path"] for entry in _load_archive_entries(manifest_path)}
 
 
-def _validate_item(raw: object, seen_keys: set[str]) -> dict | None:
-    """单条 schema 校验：任何一处不满足直接返回 None（整条丢弃，不做修补/截断）。"""
+def _validate_item(raw: object, seen_keys: set[str], seen_url_hashes: set[str] = frozenset()) -> dict | None:
+    """单条 schema 校验：任何一处不满足直接返回 None（整条丢弃，不做修补/截断）。
+
+    去重两条腿都要过：`title_key`（标题换个说法还是能命中的归一化指纹）
+    和 `url_hash`（同一个 URL，哪怕标题整段重写也躲不过）。9/19 那次踩的
+    就是纯标题去重的盲区——两天写的是同一条豆瓣帖子，标题被冲浪班改写得
+    不像，`title_key` 没对上，`url_hash` 当时压根没被用来比对（虽然
+    `mark_delivered` 一直有存）。"""
     if not isinstance(raw, dict):
         return None
     section = raw.get("section")
@@ -334,6 +353,8 @@ def _validate_item(raw: object, seen_keys: set[str]) -> dict | None:
         return None
     url = _canonical_url(raw.get("url"))
     if not url:
+        return None
+    if _fingerprint(url) in seen_url_hashes:
         return None
     source = _clean_no_truncate(raw.get("source"))
     title_key = _title_key(title)
@@ -393,16 +414,20 @@ def _load_and_validate_scout(scout_path: Path, seen: list, manifest_path: Path) 
 
     seen_keys = {item.get("title_key", "") for item in seen if isinstance(item, dict)}
     seen_keys.discard("")
+    seen_url_hashes = {item.get("url_hash", "") for item in seen if isinstance(item, dict)}
+    seen_url_hashes.discard("")
 
     validated: list[dict] = []
     for raw_item in raw_items:
-        item = _validate_item(raw_item, seen_keys)
+        item = _validate_item(raw_item, seen_keys, seen_url_hashes)
         if item is None:
             continue
         # 同一天草稿内部也去重一次（防止冲浪班自己写重了）：一旦某条被采
-        # 纳，它的 title_key 立刻并入 seen_keys，后面撞上同一个标题指纹的
-        # 条目会被当成批内重复丢弃，不止防跟历史报道撞车。
+        # 纳，它的 title_key/url_hash 立刻并入两个 seen 集合，后面撞上同
+        # 一个标题指纹或同一个链接的条目会被当成批内重复丢弃，不止防跟历
+        # 史报道撞车。
         seen_keys.add(_title_key(item["title"]))
+        seen_url_hashes.add(_fingerprint(item["url"]))
         validated.append(item)
 
     trimmed = _trim_by_budget(validated)
@@ -684,3 +709,43 @@ def load_issue_for_date(issue_date: str, state_dir: Path = STATE_PATH.parent) ->
             pass  # 档案文件缺失/损坏：条目照常展示，只是没有全文可展开
 
     return {"date": issue_date, "has_draft": True, "items": items, "error": None}
+
+
+def recent_coverage(
+    today: date, state_dir: Path = STATE_PATH.parent, *, days: int = RECENT_COVERAGE_DAYS
+) -> list[dict]:
+    """最近 `days` 个自然日写过的标题+摘要（不含今天），挂进采集素材给冲
+    浪班参考。跟 `seen_title_keys`（覆盖全部历史但只有归一化指纹，不好
+    读）是两条不同的去重腿：这个清单可读、但窗口短，专治"标题被改写得
+    不像、但其实是同一件事"这类冲浪班自己该能认出来的重复（9/19 那次追
+    踪去重排查坐实的盲区——同一条豆瓣帖子两天各写了一遍，标题差异大到
+    title_key 没对上）。只读草稿文件，不碰 `state.json`/`seen`，单条草稿
+    解析失败跳过那天，不影响其它天。"""
+    cutoff = today - timedelta(days=days)
+    coverage: list[dict] = []
+    for issue_date_str in list_scout_dates(state_dir):
+        try:
+            issue_date = date.fromisoformat(issue_date_str)
+        except ValueError:
+            continue
+        if issue_date >= today or issue_date < cutoff:
+            continue
+        try:
+            items = _load_and_validate_scout(
+                _scout_path_for_date(issue_date_str, state_dir),
+                [],
+                _archive_manifest_path_for_date(issue_date_str, state_dir),
+            )
+        except MorningPaperError:
+            continue
+        for item in items:
+            coverage.append(
+                {
+                    "issue_date": issue_date_str,
+                    "section": item["section"],
+                    "title": item["title"],
+                    "digest_short": item["digest"][:RECENT_COVERAGE_DIGEST_CHARS],
+                }
+            )
+    coverage.sort(key=lambda entry: entry["issue_date"])
+    return coverage

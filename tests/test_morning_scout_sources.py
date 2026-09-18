@@ -399,7 +399,9 @@ class BusinessDateTests(unittest.TestCase):
             mss, "collect_lobsters", return_value=[]
         ), patch.object(mss, "collect_douban", return_value=[]), patch.object(
             mss, "collect_x_syndication", return_value=[]
-        ), patch.object(morning_paper, "load_state", return_value=morning_paper._empty_state()):
+        ), patch.object(morning_paper, "load_state", return_value=morning_paper._empty_state()), patch.object(
+            mss, "_recent_coverage", return_value=[]
+        ):
             material = mss.collect_material(trigger_utc)
         self.assertEqual(trigger_utc.date().isoformat(), "2026-08-21")
         self.assertEqual(material["material_date"], "2026-08-22")
@@ -481,7 +483,11 @@ class DoubanTests(unittest.TestCase):
         self.assertEqual(len(items), 3)
         first = items[0]
         self.assertEqual(first["title"], "国内大多数高校对学生的学术训练以及科研素养还是差了点")
-        self.assertEqual(first["url"], "https://www.douban.com/group/topic/488313016/?_spm_id=MjAxNTYxODk5")
+        # `_spm_id` 是豆瓣的分享来源追踪参数，`_canonical_url` 现在会剥掉它
+        # （9/19 追踪去重排查：同一条帖子带着不同的 _spm_id 转发两次，url_hash
+        # 认不出是同一条），这份 fixture 本身就是从真实豆瓣页面抓下来的、
+        # 带着这个参数的原始样本，剥完应该只剩干净的 topic 链接。
+        self.assertEqual(first["url"], "https://www.douban.com/group/topic/488313016/")
         self.assertEqual(first["source"], "豆瓣 · 人机之恋小组")
         self.assertEqual(first["author"], "test_user_alpha")
         self.assertEqual(first["reply_count"], 5)
@@ -618,6 +624,19 @@ class SeenTitleKeysTests(unittest.TestCase):
             self.assertEqual(mss._seen_title_keys(), ["real-key"])
 
 
+class RecentCoverageTests(unittest.TestCase):
+    def test_delegates_to_morning_paper_with_biz_date(self):
+        fake_coverage = [{"issue_date": "2026-08-20", "section": "AI圈今日份", "title": "t", "digest_short": "d"}]
+        with patch.object(morning_paper, "recent_coverage", return_value=fake_coverage) as fake:
+            result = mss._recent_coverage(NOW)
+        self.assertEqual(result, fake_coverage)
+        fake.assert_called_once_with(NOW.astimezone(mss.BIZ_TZ).date())
+
+    def test_failure_degrades_to_empty_list_instead_of_raising(self):
+        with patch.object(morning_paper, "recent_coverage", side_effect=RuntimeError("boom")):
+            self.assertEqual(mss._recent_coverage(NOW), [])
+
+
 class CollectMaterialTests(unittest.TestCase):
     def test_assembles_all_sources_and_seen_keys(self):
         hn_items = [{"title": "hn", "url": "https://example.org/hn", "summary": ""}]
@@ -631,7 +650,7 @@ class CollectMaterialTests(unittest.TestCase):
             mss, "collect_x_syndication", return_value=x_items
         ) as fake_x, patch.object(
             morning_paper, "load_state", return_value=make_state(["seen-key"])
-        ):
+        ), patch.object(mss, "_recent_coverage", return_value=[]):
             material = mss.collect_material(NOW)
 
         self.assertEqual(material["material_date"], "2026-08-21")
@@ -645,12 +664,26 @@ class CollectMaterialTests(unittest.TestCase):
         passed_items = fake_x.call_args[0][0]
         self.assertEqual(len(passed_items), 3)
 
+    def test_recent_coverage_key_comes_from_recent_coverage_helper(self):
+        fake_coverage = [{"issue_date": "2026-08-20", "section": "人机恋小报", "title": "t", "digest_short": "d"}]
+        with patch.object(mss, "collect_hacker_news", return_value=[]), patch.object(
+            mss, "collect_lobsters", return_value=[]
+        ), patch.object(mss, "collect_douban", return_value=[]), patch.object(
+            mss, "collect_x_syndication", return_value=[]
+        ), patch.object(morning_paper, "load_state", return_value=morning_paper._empty_state()), patch.object(
+            mss, "_recent_coverage", return_value=fake_coverage
+        ):
+            material = mss.collect_material(NOW)
+        self.assertEqual(material["recent_coverage"], fake_coverage)
+
     def test_one_source_failing_is_recorded_but_others_still_present(self):
         with patch.object(mss, "collect_hacker_news", side_effect=mss.ScoutSourceError("挂了")), patch.object(
             mss, "collect_lobsters", return_value=[]
         ), patch.object(mss, "collect_douban", return_value=[]), patch.object(
             mss, "collect_x_syndication", return_value=[]
-        ), patch.object(morning_paper, "load_state", return_value=morning_paper._empty_state()):
+        ), patch.object(morning_paper, "load_state", return_value=morning_paper._empty_state()), patch.object(
+            mss, "_recent_coverage", return_value=[]
+        ):
             material = mss.collect_material(NOW)
         self.assertFalse(material["sources"]["hacker_news"]["ok"])
         self.assertEqual(material["sources"]["hacker_news"]["error"], "挂了")
@@ -683,6 +716,12 @@ class CollectMaterialFeedbackTests(unittest.TestCase):
         feedback_patcher = patch.object(morning_feedback, "FEEDBACK_PATH", self.feedback_path)
         feedback_patcher.start()
         self.addCleanup(feedback_patcher.stop)
+        # recent_coverage 默认读 morning_paper.STATE_PATH.parent（生产
+        # .morning_paper/），不像 MATERIAL_DIR 那样在这里改过道，不挡住会
+        # 直接读生产草稿文件（同 conftest.py 里 STATE_PATH 那条已知限制）。
+        recent_coverage_patcher = patch.object(mss, "_recent_coverage", return_value=[])
+        recent_coverage_patcher.start()
+        self.addCleanup(recent_coverage_patcher.stop)
 
     def test_no_feedback_data_means_no_feedback_key(self):
         material = mss.collect_material(NOW)

@@ -3,7 +3,7 @@ import json
 import os
 import tempfile
 import unittest
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import patch
 
@@ -108,6 +108,25 @@ class ScoutItemValidationTests(unittest.TestCase):
         item = real_item(0)
         seen_keys = {morning_paper._title_key(item["title"])}
         self.assertIsNone(morning_paper._validate_item(item, seen_keys=seen_keys))
+
+    def test_seen_url_hash_hit_drops_item_even_with_rewritten_title(self):
+        # 9/19 实况：同一条豆瓣帖子换了个标题写法，title_key 对不上，但
+        # url_hash 应该照样拦下——这是本次修的盲区。
+        item = real_item(0)
+        item["title"] = "这标题被冲浪班整段重写了，跟历史条目完全不像"
+        seen_url_hashes = {morning_paper._fingerprint(morning_paper._canonical_url(real_item(0)["url"]))}
+        self.assertIsNone(
+            morning_paper._validate_item(item, seen_keys=set(), seen_url_hashes=seen_url_hashes)
+        )
+
+    def test_canonical_url_strips_spm_tracking_params(self):
+        # 豆瓣等站点的分享来源参数（spm/_spm_id/spm_id_from）纯属追踪噪
+        # 音，同一篇帖子转发几次会带出不同的值，不能当成不同内容。
+        base = morning_paper._canonical_url("https://www.douban.com/group/topic/206597775/")
+        with_spm = morning_paper._canonical_url(
+            "https://www.douban.com/group/topic/206597775/?_spm_id=MTM0NDE5ODUy"
+        )
+        self.assertEqual(base, with_spm)
 
     def test_links_valid_entries_kept_invalid_dropped_capped(self):
         raw = {**real_item(0), "links": [
@@ -651,6 +670,33 @@ class ScoutQueryForFrontendTests(unittest.TestCase):
         by_title = {item["title"]: item for item in result["items"]}
         self.assertEqual(by_title[REAL_ITEMS[0]["title"]]["archive_path"], rel_path)
         self.assertNotIn("archive_text", by_title[REAL_ITEMS[0]["title"]])
+
+    def test_recent_coverage_only_includes_last_n_days_excluding_today(self):
+        # 9/19 追踪去重排查：冲浪班没有跨天记忆，只靠 seen_title_keys（归一
+        # 化指纹，不好读）容易漏认"标题换了说法但其实是同一件事"。这个函
+        # 数给最近几天一份可读的标题+摘要清单，窗口外/今天本身都不该出现。
+        write_scout(self.state_dir, "2026-08-19", REAL_SCOUT_DOC)
+        write_scout(self.state_dir, "2026-08-20", REAL_SCOUT_DOC)
+        write_scout(self.state_dir, "2026-08-21", REAL_SCOUT_DOC)  # 今天
+        write_scout(self.state_dir, "2026-08-16", REAL_SCOUT_DOC)  # 超出3天窗口
+        coverage = morning_paper.recent_coverage(date(2026, 8, 21), self.state_dir, days=3)
+        self.assertEqual({entry["issue_date"] for entry in coverage}, {"2026-08-19", "2026-08-20"})
+        self.assertEqual(coverage[0]["issue_date"], "2026-08-19")  # 按日期升序，旧的在前
+        first = coverage[0]
+        self.assertEqual(first["title"], REAL_ITEMS[0]["title"])
+        self.assertEqual(first["digest_short"], REAL_ITEMS[0]["digest"][:morning_paper.RECENT_COVERAGE_DIGEST_CHARS])
+        self.assertEqual(first["section"], REAL_ITEMS[0]["section"])
+
+    def test_recent_coverage_skips_malformed_draft_without_raising(self):
+        write_scout(self.state_dir, "2026-08-20", REAL_SCOUT_DOC)
+        scout_path = self.state_dir / "scout-2026-08-19.json"
+        self.state_dir.mkdir(parents=True, exist_ok=True)
+        scout_path.write_text("{not valid json", encoding="utf-8")
+        coverage = morning_paper.recent_coverage(date(2026, 8, 21), self.state_dir, days=3)
+        self.assertEqual({entry["issue_date"] for entry in coverage}, {"2026-08-20"})
+
+    def test_recent_coverage_empty_dir_returns_empty_list(self):
+        self.assertEqual(morning_paper.recent_coverage(date(2026, 8, 21), self.state_dir, days=3), [])
 
 
 class FeatureToggleTests(unittest.TestCase):
