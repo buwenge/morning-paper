@@ -3,6 +3,8 @@
 # 第1段：跑确定性采集脚本 morning_scout_sources.py，产出 material-<业务日期>.json。
 # 第2段：无头 sonnet（claude -p）读素材 + 自主 WebSearch 冲浪，把成品写成
 #        scout-<业务日期>.json。
+# 第2.5段：morning_scout_repair.py 给草稿做 JSON 体检，裸引号之类的手误
+#        当场修好写回（原文留底），修不回来就按失败退出。
 # 第3段：跑确定性编排脚本 morning_archive.py（S4 档案馆），把当日晨报最终
 #        会投递的每一条转成干净文字档，存到 .morning_paper/archive/<业务
 #        日期>/ 下；内部逐条起独立无头 haiku 会话做转写。**第3段失败/超时
@@ -135,6 +137,18 @@ if [ ! -f "$DRAFT_FILE" ]; then
 fi
 
 log "第2段完成：晨报草稿已产出 $DRAFT_FILE"
+
+# 草稿体检（2026-09-19 加）：冲浪班偶尔在 digest 里引用原话用半角直引号不
+# 转义，文件就不是合法 JSON（9/11、9/19 各一次，daemon 静默吞异常当天缺
+# 席）。这里趁热读一遍：合法不动；裸引号之类修得回来的就留底+写回合法
+# 文件（日志里带"自动修复"字样，grep 它就是复发账本）；修不回来按失败退
+# 出、文件原样留给人工修。详见 morning_scout_repair.py 的 docstring。
+/usr/bin/python3 "$XIAOYU_DIR/morning_scout_repair.py" "$DRAFT_FILE" >> "$LOG_FILE" 2>&1
+REPAIR_STATUS=$?
+if [ $REPAIR_STATUS -ne 0 ]; then
+  log "第2段产出的草稿不是合法 JSON 且自动修复失败（退出码 $REPAIR_STATUS），今天报纸会缺席，草稿原样保留待人工修"
+  exit 1
+fi
 
 log "第3段：档案馆归档（haiku，工作目录 $SCOUT_WORKDIR）"
 /usr/bin/python3 "$XIAOYU_DIR/morning_archive.py" >> "$LOG_FILE" 2>&1

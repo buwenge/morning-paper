@@ -25,6 +25,12 @@ part of what makes the design interesting to read; only real infrastructure
     a scout-<date>.json draft — this is the only LLM step with editorial judgment)
         │
         ▼
+2.5 Draft check     morning_scout_repair.py      deterministic, no LLM
+   (the writer occasionally leaves unescaped `"` inside a digest and the file
+    isn't valid JSON; this step re-escapes stray quotes by JSON grammar, keeps
+    the original as `*.bak-badjson-<date>`, and fails loudly if it can't fix it)
+        │
+        ▼
 3. Archive          morning_archive.py           headless `claude -p --model haiku`, per item
    (each linked article gets its own isolated transcription session; X tweets
     are assembled deterministically from the syndication text already collected
@@ -48,11 +54,12 @@ writes and file locks.
 - **Core modules** (root of this repo, no changes needed to reuse):
   `morning_paper.py`, `morning_feedback.py`, `morning_archive.py`,
   `morning_scout_sources.py`, `session_intro.py`, `cn_numerals.py`
-- **Cron shell wrapper**: `morning_scout.sh` (stages 1–3)
+- **Cron shell wrapper**: `morning_scout.sh` (stages 1–3) and the stage-2.5
+  draft check `morning_scout_repair.py`
 - **The stage-2 writer's task brief**: `prompts/morning_scout.md`
 - **Frontend reading page** (Next.js/React, TypeScript): `frontend/`
 - **Chatbot integration excerpts** (see caveat below): `integration/`
-- **Tests**: `tests/` (four suites test the core modules directly and run
+- **Tests**: `tests/` (five suites test the core modules directly and run
   as-is; two production test files that exercise the full chat-command
   dispatcher and WebSocket router aren't included as runnable files — see
   `tests/README_excerpted_tests.md` for what they cover)

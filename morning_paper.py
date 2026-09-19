@@ -399,13 +399,150 @@ def _trim_by_budget(items: list[dict]) -> list[dict]:
     return kept
 
 
+_SCOUT_WS = " \t\r\n"
+
+
+def _skip_ws(text: str, index: int) -> int:
+    while index < len(text) and text[index] in _SCOUT_WS:
+        index += 1
+    return index
+
+
+def _next_is_key_shaped(text: str, index: int) -> bool:
+    """`index` 处是不是 `"<键名>"` 紧跟（可含空白）一个冒号。
+
+    故意不查键名是否在契约里：只认形状，新加的契约字段不用在这里登记；
+    正文里碰巧出现 `,"xx":` 这种形状（半角逗号+引号+半角冒号）会被误判成
+    下一个键，但误判的结果是 `json.loads` 失败、照旧报"无法解析"，不会
+    把正文吞进上一个字段里当成修好了。"""
+    if index >= len(text) or text[index] != '"':
+        return False
+    end = text.find('"', index + 1)
+    if end < 0:
+        return False
+    after = _skip_ws(text, end + 1)
+    return after < len(text) and text[after] == ":"
+
+
+def _quote_terminates(text: str, index: int, is_key: bool, container: str) -> bool:
+    """字符串里遇到一个未转义的 `"`，看它后面跟的东西判断它是不是这个字符
+    串真正的结尾：键名后面必须是冒号；值后面必须是本容器的闭合括号、或
+    者逗号加下一个键（对象里，只认 `"xx":` 的形状）/逗号加下一个元素（数组里）/文件末
+    尾。其余情况一律当成正文里的裸引号。"""
+    after = _skip_ws(text, index)
+    if after >= len(text):
+        return True
+    char = text[after]
+    if is_key:
+        return char == ":"
+    if char == "}":
+        return container == "{"
+    if char == "]":
+        return container == "["
+    if char != ",":
+        return False
+    after = _skip_ws(text, after + 1)
+    if container == "{":
+        return _next_is_key_shaped(text, after)
+    return after < len(text) and text[after] in '"{['
+
+
+def _escape_stray_quotes(text: str) -> str:
+    """把字符串正文里没转义的半角双引号补上反斜杠，其余字节原样保留。
+
+    冲浪班（sonnet）在 `digest`/`title` 里引用原话时偶尔直接写 `"没有"`
+    不写 `\\"没有\\"`，整个文件就不是合法 JSON（9/11、9/19 各栽一次）。这里
+    按 JSON 语法扫一遍：不在字符串里时照抄；在字符串里遇到 `"` 就用
+    `_quote_terminates` 看它是不是真正的结尾，不是就补 `\\`。判断错了
+    结果也只是 `json.loads` 照旧失败——调用方保证修复失败时行为跟修复
+    前一模一样（报"无法解析"），不会把错的东西当对的吞下去。
+    """
+    out: list[str] = []
+    stack: list[str] = []
+    in_string = False
+    is_key = False
+    index = 0
+    length = len(text)
+    while index < length:
+        char = text[index]
+        if not in_string:
+            if char == '"':
+                previous = _last_non_ws(out)
+                container = stack[-1] if stack else ""
+                is_key = container == "{" and previous in ("{", ",")
+                in_string = True
+            elif char in "{[":
+                stack.append(char)
+            elif char in "}]" and stack:
+                stack.pop()
+            out.append(char)
+            index += 1
+            continue
+        if char == "\\":
+            out.append(text[index:index + 2])
+            index += 2
+            continue
+        if char != '"':
+            out.append(char)
+            index += 1
+            continue
+        container = stack[-1] if stack else ""
+        if _quote_terminates(text, index + 1, is_key, container):
+            in_string = False
+            out.append(char)
+        else:
+            out.append('\\"')
+        index += 1
+    return "".join(out)
+
+
+def _last_non_ws(chunks: list[str]) -> str:
+    for chunk in reversed(chunks):
+        stripped = chunk.rstrip(_SCOUT_WS)
+        if stripped:
+            return stripped[-1]
+    return ""
+
+
+def _repair_scout_json(text: str) -> object:
+    """严格解析失败后的兜底：剥掉可能的 ```json 围栏与首尾杂文，补转义裸
+    引号，再用 `strict=False`（容忍字符串里的原始换行/控制符）解析。修不
+    好就把 `json.JSONDecodeError` 原样抛出去，由调用方按老路径处理。"""
+    start = text.find("{")
+    end = text.rfind("}")
+    if start < 0 or end <= start:
+        raise json.JSONDecodeError("草稿里找不到 JSON 对象", text, 0)
+    body = _escape_stray_quotes(text[start:end + 1])
+    return json.loads(body, strict=False)
+
+
+def parse_scout_text(text: str) -> tuple[object, bool]:
+    """解析草稿正文：先严格 `json.loads`；失败再走 `_repair_scout_json`。
+    返回 `(解析结果, 是否动用了修复)`——调用方拿到 True 必须大声记日志
+    /落盘备份，不许悄悄吞掉，这是 9/11 拍板"怕掩盖更严重格式错误"的对
+    价：修复只兜"裸引号/围栏/控制符"这几种已知手误，且修完必须过严格
+    schema 校验；修不回来照旧抛 `json.JSONDecodeError`。"""
+    try:
+        return json.loads(text), False
+    except json.JSONDecodeError as strict_exc:
+        try:
+            return _repair_scout_json(text), True
+        except json.JSONDecodeError:
+            raise strict_exc
+
+
 def _load_and_validate_scout(scout_path: Path, seen: list, manifest_path: Path) -> list[dict]:
     if not scout_path.exists():
         raise MorningPaperError(f"今天报纸缺席：草稿文件不存在（{scout_path.name}）")
     try:
-        parsed = json.loads(scout_path.read_text(encoding="utf-8"))
+        parsed, repaired = parse_scout_text(scout_path.read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise MorningPaperError("今天报纸缺席：草稿文件无法解析") from exc
+    if repaired:
+        # 正常情况下 cron 侧 morning_scout_repair.py 已经把坏档改正落盘，
+        # daemon 读到的是合法文件；走到这里说明那一步没跑到（超时/手动
+        # 放的文件），仍然放行但要留痕，让人知道冲浪班又写坏了一次。
+        logging.warning("晨报草稿 %s 不是合法 JSON，已按裸引号规则自动修复后解析", scout_path.name)
     if not isinstance(parsed, dict):
         raise MorningPaperError("今天报纸缺席：草稿文件格式不对")
     raw_items = parsed.get("items")
