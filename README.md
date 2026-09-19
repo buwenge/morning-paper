@@ -53,7 +53,10 @@ writes and file locks.
 
 - **Core modules** (root of this repo, no changes needed to reuse):
   `morning_paper.py`, `morning_feedback.py`, `morning_archive.py`,
-  `morning_scout_sources.py`, `session_intro.py`, `cn_numerals.py`
+  `morning_scout_sources.py`, `session_intro.py`, `cn_numerals.py`,
+  `log_store.py` (the tiny JSONL activity log the cron stages write
+  "briefing run started / draft landed / stage failed" entries to, so the
+  chat UI's activity panel shows them without reading the cron log)
 - **Cron shell wrapper**: `morning_scout.sh` (stages 1–3) and the stage-2.5
   draft check `morning_scout_repair.py`
 - **The stage-2 writer's task brief**: `prompts/morning_scout.md`

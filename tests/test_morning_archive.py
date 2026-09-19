@@ -586,6 +586,37 @@ class BuildArchiveTests(unittest.TestCase):
 
 
 class RunTests(unittest.TestCase):
+    def test_run_logs_activity_warning_only_when_some_items_failed(self):
+        # 有条目没归档成才往前端活动日志记 warning；全成功/全缺席都不吵。
+        import log_store
+        with tempfile.TemporaryDirectory() as tempdir:
+            state_dir = Path(tempdir)
+            log_path = state_dir / "logs.jsonl"
+            seen_patch = patch.object(morning_archive.scout_sources, "_seen_title_keys", return_value=[])
+            with seen_patch, patch.object(log_store, "LOG_FILE", log_path):
+                # 缺席：没有草稿
+                morning_archive.run(now=NOW, state_dir=state_dir)
+                self.assertFalse(log_path.exists())
+                # 两条里一条失败
+                scout_path = state_dir / "scout-2026-08-21.json"
+                scout_path.write_text(
+                    json.dumps({"issue_date": "2026-08-21", "items": REAL_ITEMS[:2]}, ensure_ascii=False),
+                    encoding="utf-8",
+                )
+                outcomes = iter([("ok", None), ("failed", "转档流程结束但未产出文件")])
+
+                def fake_archive_item(index, item, archive_dir, state_dir, workdir):
+                    status, error = next(outcomes)
+                    return {"index": index, "title": item["title"], "url": item["url"], "path": "x.md",
+                            "status": status, "kind": "html", "error": error}
+
+                with patch.object(morning_archive, "archive_item", side_effect=fake_archive_item):
+                    morning_archive.run(now=NOW, state_dir=state_dir)
+                entries = [json.loads(line) for line in log_path.read_text(encoding="utf-8").splitlines() if line]
+        self.assertEqual(len(entries), 1)
+        self.assertEqual((entries[0]["level"], entries[0]["category"]), ("warning", "activity"))
+        self.assertIn("2 条里 1 条没归档成", entries[0]["message"])
+
     def test_run_uses_given_now_and_state_dir_and_returns_manifest(self):
         with tempfile.TemporaryDirectory() as tempdir:
             state_dir = Path(tempdir)

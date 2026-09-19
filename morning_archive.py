@@ -57,6 +57,7 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
+import log_store
 import morning_paper
 import morning_scout_sources as scout_sources
 
@@ -535,6 +536,12 @@ def run(now: datetime | None = None, state_dir: Path = morning_paper.STATE_PATH.
     total = len(manifest.get("items", []))
     ok = sum(1 for entry in manifest.get("items", []) if entry.get("status") == "ok")
     logging.info("晨报档案馆：%s 完成，成功 %d/%d", issue_date, ok, total)
+    if total and ok < total:
+        # 全成功不吵（"晨报已落库"那条已经够了）；有条目没归档才往前端活动
+        # 日志记一笔，投递时那几条会退回纯链接展示。
+        log_store.write_log(
+            "warning", "activity", f"晨报档案馆：{total} 条里 {total - ok} 条没归档成，投递时退回纯链接",
+        )
     return manifest
 
 

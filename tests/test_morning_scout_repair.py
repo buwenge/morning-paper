@@ -12,7 +12,9 @@ import tempfile
 import unittest
 from datetime import datetime
 from pathlib import Path
+from unittest.mock import patch
 
+import log_store
 import morning_paper
 import morning_scout_repair
 
@@ -134,16 +136,31 @@ class RepairScriptTests(unittest.TestCase):
         self.state_dir = Path(self._tempdir.name)
         self.scout_path = self.state_dir / "scout-2026-09-11.json"
         self.today = datetime(2026, 9, 11, 5, 15)
+        # 前端活动日志改道到临时文件（conftest 已全局改道，这里再指一份
+        # 独立的，方便逐条断言本用例写了什么）。
+        self._log_patch = patch.object(log_store, "LOG_FILE", self.state_dir / "logs.jsonl")
+        self._log_patch.start()
 
     def tearDown(self):
+        self._log_patch.stop()
         self._tempdir.cleanup()
+
+    def activity_entries(self) -> list[dict]:
+        log_path = self.state_dir / "logs.jsonl"
+        if not log_path.exists():
+            return []
+        return [json.loads(line) for line in log_path.read_text(encoding="utf-8").splitlines() if line]
 
     def test_valid_file_untouched_exit_zero(self):
         payload = json.dumps({"issue_date": "2026-09-11", "items": []}, ensure_ascii=False)
         self.scout_path.write_text(payload, encoding="utf-8")
         self.assertEqual(morning_scout_repair.check_and_repair(self.scout_path, self.today), 0)
         self.assertEqual(self.scout_path.read_text(encoding="utf-8"), payload)
-        self.assertEqual(list(self.state_dir.iterdir()), [self.scout_path])
+        self.assertEqual(sorted(self.state_dir.iterdir()), [self.state_dir / "logs.jsonl", self.scout_path])
+        entries = self.activity_entries()
+        self.assertEqual(len(entries), 1)
+        self.assertEqual((entries[0]["level"], entries[0]["category"]), ("info", "activity"))
+        self.assertEqual(entries[0]["message"], "晨报已落库（0 条）")
 
     def test_bad_file_is_backed_up_and_rewritten_valid(self):
         self.scout_path.write_text(BAD_DOC_TEXT, encoding="utf-8")
@@ -157,6 +174,12 @@ class RepairScriptTests(unittest.TestCase):
         self.assertIn(EXPECTED_DIGEST_TAIL, rewritten["items"][0]["digest"])
         self.assertEqual(self.scout_path.stat().st_mode & 0o777, 0o644)
         self.assertTrue(any("自动修复" in line for line in captured.output))
+        entries = self.activity_entries()
+        self.assertEqual(len(entries), 1)
+        self.assertEqual((entries[0]["level"], entries[0]["category"]), ("warning", "activity"))
+        self.assertIn("晨报已落库（1 条", entries[0]["message"])
+        self.assertIn("已自动修复裸引号", entries[0]["message"])
+        self.assertIn(backup.name, entries[0]["message"])
 
     def test_second_backup_same_day_does_not_overwrite_first(self):
         first = self.state_dir / "scout-2026-09-11.json.bak-badjson-20260911"
@@ -173,7 +196,12 @@ class RepairScriptTests(unittest.TestCase):
             status = morning_scout_repair.check_and_repair(self.scout_path, self.today)
         self.assertEqual(status, 2)
         self.assertEqual(self.scout_path.read_text(encoding="utf-8"), "{not valid json")
-        self.assertEqual(list(self.state_dir.iterdir()), [self.scout_path])
+        self.assertEqual(sorted(self.state_dir.iterdir()), [self.state_dir / "logs.jsonl", self.scout_path])
+        entries = self.activity_entries()
+        self.assertEqual(len(entries), 1)
+        self.assertEqual((entries[0]["level"], entries[0]["category"]), ("error", "activity"))
+        self.assertIn("自动修复失败", entries[0]["message"])
+        self.assertIn("今天报纸缺席", entries[0]["message"])
 
     def test_missing_file_exit_two(self):
         with self.assertLogs(level=logging.ERROR):

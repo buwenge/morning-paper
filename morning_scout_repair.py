@@ -14,6 +14,11 @@
 - 修不回来：不动文件，退出码 2，由外壳脚本记日志并按失败退出（跟修复层
   上线前一样，报纸缺席、草稿原样留给人工修）。
 
+三种结果都往前端"活动"日志（`log_store.write_log`，跟 daemon 同一个
+`logs.jsonl`）记一条：合法→"晨报已落库（N 条）"；修过→同一句加"已自动修
+复裸引号"、级别 warning；修不回来→error。用户 9/19 要求不用翻
+morning_scout.log 就能在网页上看到晨报班每天的结果。
+
 修复规则只覆盖裸引号/围栏/控制符这几种已知手误，且修完必须过严格
 `json.loads`；更离谱的格式错误照旧报错，不会被吞掉（9/11 拍板"怕掩盖更
 严重格式错误"的顾虑就靠这条兜住）。想知道冲浪班又写坏了几次，
@@ -28,6 +33,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+import log_store
 import morning_paper
 
 EXIT_OK = 0
@@ -59,12 +65,19 @@ def check_and_repair(scout_path: Path, today: datetime | None = None) -> int:
             "晨报草稿体检：%s 不是合法 JSON 且自动修复失败（%s，第 %d 行第 %d 列），原样保留待人工修",
             scout_path.name, exc.msg, exc.lineno, exc.colno,
         )
+        log_store.write_log(
+            "error", "activity",
+            f"晨报班：草稿不是合法 JSON 且自动修复失败（第 {exc.lineno} 行第 {exc.colno} 列），今天报纸缺席，待人工修",
+        )
         return EXIT_UNREPAIRABLE
+    count = _item_count(parsed)
     if not repaired:
         logging.info("晨报草稿体检：%s 是合法 JSON", scout_path.name)
+        log_store.write_log("info", "activity", f"晨报已落库（{count} 条）")
         return EXIT_OK
     if not isinstance(parsed, dict):
         logging.error("晨报草稿体检：%s 修复后顶层不是对象，原样保留待人工修", scout_path.name)
+        log_store.write_log("error", "activity", "晨报班：草稿修复后顶层不是对象，今天报纸缺席，待人工修")
         return EXIT_UNREPAIRABLE
     backup = backup_path_for(scout_path, today)
     original_mode = scout_path.stat().st_mode & 0o777
@@ -77,7 +90,19 @@ def check_and_repair(scout_path: Path, today: datetime | None = None) -> int:
         "晨报草稿体检：%s 不是合法 JSON，已自动修复（裸引号补转义）并写回，原文留底 %s",
         scout_path.name, backup.name,
     )
+    log_store.write_log(
+        "warning", "activity",
+        f"晨报已落库（{count} 条，草稿不是合法 JSON、已自动修复裸引号，原文留底 {backup.name}）",
+    )
     return EXIT_OK
+
+
+def _item_count(parsed: object) -> int:
+    """草稿里 items 的条数，只用于活动日志里"落库 N 条"的展示；形状不对就
+    0，真正的 schema 校验在 daemon 侧 `_load_and_validate_scout`。"""
+    if isinstance(parsed, dict) and isinstance(parsed.get("items"), list):
+        return len(parsed["items"])
+    return 0
 
 
 def main(argv: list[str]) -> int:

@@ -47,6 +47,20 @@ log() {
   echo "[$(date -u '+%Y-%m-%d %H:%M:%S UTC')] $*" >> "$LOG_FILE"
 }
 
+# 前端"活动"日志（logs.jsonl，跟 daemon 的 log_and_broadcast 同一个文件、同
+# 一个 log_store.write_log；cron 在 daemon 外面跑，没法广播，但日志面板每
+# 次打开都是重读文件，落盘就能看到）。2026-09-19 用户要求：开跑、落库、
+# 以及各段报错都要能在网页活动里看到，不用再翻 morning_scout.log。
+# 用法：activity_log <info|warning|error> <一句话>
+activity_log() {
+  /usr/bin/python3 - "$1" "$2" <<PY >> "$LOG_FILE" 2>&1
+import sys
+sys.path.insert(0, "$XIAOYU_DIR")
+import log_store
+log_store.write_log(sys.argv[1], "activity", sys.argv[2])
+PY
+}
+
 # 业务日期一律 +08:00（北京），跟 morning_scout_sources.py 的 BIZ_TZ 契约一致
 # （详见该模块 docstring）。cron 定在 UTC 21:10 触发，那一刻 UTC 日期还是
 # "昨天"，必须显式用 TZ 覆盖算，不能用系统本地 date（系统时区是 UTC）。
@@ -73,16 +87,19 @@ if [ "$FORCE" -ne 1 ] && [ -f "$DRAFT_FILE" ]; then
 fi
 
 log "=== 开始（业务日期 $BIZ_DATE，force=$FORCE） ==="
+activity_log info "晨报班开跑（业务日期 $BIZ_DATE）"
 log "第1段：采集"
 /usr/bin/python3 "$XIAOYU_DIR/morning_scout_sources.py" >> "$LOG_FILE" 2>&1
 COLLECT_STATUS=$?
 if [ $COLLECT_STATUS -ne 0 ]; then
   log "第1段采集失败（退出码 $COLLECT_STATUS），今天不再继续，明天再来"
+  activity_log error "晨报班：采集失败（退出码 $COLLECT_STATUS），今天报纸缺席"
   exit 1
 fi
 
 if [ ! -f "$MATERIAL_FILE" ]; then
   log "第1段结束但没有产出素材文件 $MATERIAL_FILE，视为失败，退出"
+  activity_log error "晨报班：采集结束但没有素材文件，今天报纸缺席"
   exit 1
 fi
 log "第1段采集完成：$MATERIAL_FILE"
@@ -91,6 +108,7 @@ log "第2段：冲浪写稿（sonnet，工作目录 $SCOUT_WORKDIR）"
 
 if [ ! -d "$SCOUT_WORKDIR" ]; then
   log "冲浪班工作目录 $SCOUT_WORKDIR 不存在，退出（应提前建好且保持空目录，不放 CLAUDE.md/.claude）"
+  activity_log error "晨报班：冲浪班工作目录不存在，今天报纸缺席"
   exit 1
 fi
 
@@ -128,11 +146,13 @@ SCOUT_STATUS=$?
 
 if [ $SCOUT_STATUS -ne 0 ]; then
   log "第2段冲浪写稿失败或超时（退出码 $SCOUT_STATUS），今天不重试，明天再来"
+  activity_log error "晨报班：冲浪写稿失败或超时（退出码 $SCOUT_STATUS），今天报纸缺席"
   exit 1
 fi
 
 if [ ! -f "$DRAFT_FILE" ]; then
   log "第2段结束但没有产出草稿文件 $DRAFT_FILE，视为失败"
+  activity_log error "晨报班：冲浪写稿结束但没有草稿文件，今天报纸缺席"
   exit 1
 fi
 
@@ -143,6 +163,8 @@ log "第2段完成：晨报草稿已产出 $DRAFT_FILE"
 # 席）。这里趁热读一遍：合法不动；裸引号之类修得回来的就留底+写回合法
 # 文件（日志里带"自动修复"字样，grep 它就是复发账本）；修不回来按失败退
 # 出、文件原样留给人工修。详见 morning_scout_repair.py 的 docstring。
+# "晨报已落库（N 条）"/"修复失败"这两条活动日志由体检脚本自己写（它手里
+# 有解析结果，知道条数），这里不重复。
 /usr/bin/python3 "$XIAOYU_DIR/morning_scout_repair.py" "$DRAFT_FILE" >> "$LOG_FILE" 2>&1
 REPAIR_STATUS=$?
 if [ $REPAIR_STATUS -ne 0 ]; then
@@ -155,6 +177,7 @@ log "第3段：档案馆归档（haiku，工作目录 $SCOUT_WORKDIR）"
 ARCHIVE_STATUS=$?
 if [ $ARCHIVE_STATUS -ne 0 ]; then
   log "第3段档案馆异常退出（退出码 $ARCHIVE_STATUS）——晨报草稿已经落盘不受影响，只是今天可能没有/少几份原文档案，投递时对应条目退回纯 URL 展示"
+  activity_log warning "晨报班：档案馆异常退出（退出码 $ARCHIVE_STATUS），晨报本体不受影响，缺档案的条目退回纯链接"
 else
   log "第3段档案馆完成"
 fi
