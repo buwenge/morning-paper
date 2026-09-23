@@ -34,7 +34,10 @@ part of what makes the design interesting to read; only real infrastructure
 3. Archive          morning_archive.py           headless `claude -p --model haiku`, per item
    (each linked article gets its own isolated transcription session; X tweets
     are assembled deterministically from the syndication text already collected
-    in stage 1 — no LLM call needed for those)
+    in stage 1, or fetched from the syndication endpoint on the spot if stage 1
+    missed them — no LLM call needed for those. If WebFetch is blocked by the
+    site, the page is downloaded directly, stripped to plain text with the
+    standard library, and haiku transcribes the local file instead)
         │
         ▼
 4. Deliver + feedback   morning_paper.py + morning_feedback.py   inside the daemon
@@ -99,7 +102,10 @@ posts — so they're deliberately sandboxed:
   that reaches the final issue.
 - A single article's fetch/transcription failing or timing out only drops
   that one article's archive (it falls back to a plain link); it never
-  fails the day's issue or the rest of the archive batch.
+  fails the day's issue or the rest of the archive batch. The per-item reason
+  (including haiku's own "couldn't fetch this" note) goes into the activity
+  log line. No new direct-download fallback is started in the last few
+  minutes before the daemon reads the manifest, so a slow night can't delay it.
 
 ## Deploying this yourself
 

@@ -157,13 +157,16 @@ class DownloadPdfTests(unittest.TestCase):
 
 
 class InvokeHaikuTests(unittest.TestCase):
-    def test_success_returns_none(self):
+    def test_success_returns_haiku_last_words(self):
+        # haiku 没写文件时最后那句话就是原因，不能再丢
+        stdout = json.dumps({"is_error": False, "result": " CBC.ca 返回 HTTP 403 ", "permission_denials": []})
         with tempfile.TemporaryDirectory() as tempdir, patch.object(
-            morning_archive.subprocess, "run", return_value=FakeCompletedProcess(0, stdout=_success_payload())
+            morning_archive.subprocess, "run", return_value=FakeCompletedProcess(0, stdout=stdout)
         ):
-            morning_archive._invoke_haiku(
+            note = morning_archive._invoke_haiku(
                 "prompt", tools="WebFetch,Write", allowed_tools="WebFetch", workdir=Path(tempdir)
-            )  # 不抛异常即通过
+            )
+        self.assertEqual(note, "CBC.ca 返回 HTTP 403")
 
     def test_subprocess_timeout_raises_archive_timeout(self):
         with tempfile.TemporaryDirectory() as tempdir, patch.object(
@@ -256,21 +259,65 @@ class ArchiveItemTests(unittest.TestCase):
         self.assertEqual(entry["est_tokens"], morning_paper.estimate_tokens(written))
 
     def test_haiku_claims_success_but_no_file_is_failure(self):
+        # 9/24：haiku 那句"抓不到"要进失败原因；本机直连兜底也失败时两段都带上
         with patch.object(morning_archive, "_detect_kind", return_value="html"), patch.object(
-            morning_archive, "_invoke_haiku", return_value=None
+            morning_archive, "_invoke_haiku", return_value="CBC.ca 返回 HTTP 403 Forbidden"
+        ), patch.object(morning_archive, "_fallback_allowed", return_value=True), patch.object(
+            morning_archive, "_download_page_text", side_effect=morning_archive.ArchiveError("本机直连也被拒（HTTP 403）")
         ):
             entry = morning_archive.archive_item(1, self.item, self.archive_dir, self.state_dir, self.workdir)
         self.assertEqual(entry["status"], "failed")
         self.assertIsNone(entry["path"])
-        self.assertIn("未产出文件", entry["error"])
+        self.assertIn("CBC.ca 返回 HTTP 403", entry["error"])
+        self.assertIn("本机直连也被拒", entry["error"])
+        self.assertFalse(list(self.archive_dir.glob("*.page.txt")))
+
+    def test_webfetch_blocked_then_local_fetch_fallback_succeeds(self):
+        calls = []
+        stem = f"01-{morning_archive._slug_from_url(self.item['url'])}"
+
+        def fake_invoke(prompt, *, tools, allowed_tools, workdir):
+            calls.append((tools, allowed_tools))
+            if len(calls) == 1:
+                return "the site is blocking automated access"
+            text_path = self.archive_dir / f"{stem}.page.txt"
+            self.assertIn(str(text_path), prompt)
+            self.assertEqual(text_path.read_text(encoding="utf-8"), "正文" * 200)
+            (self.archive_dir / f"{stem}.md").write_text("---\ntitle: t\n---\n正文", encoding="utf-8")
+            return "文件已创建。"
+
+        with patch.object(morning_archive, "_detect_kind", return_value="html"), patch.object(
+            morning_archive, "_invoke_haiku", side_effect=fake_invoke
+        ), patch.object(morning_archive, "_fallback_allowed", return_value=True), patch.object(
+            morning_archive, "_download_page_text", return_value="正文" * 200
+        ):
+            entry = morning_archive.archive_item(1, self.item, self.archive_dir, self.state_dir, self.workdir)
+        self.assertEqual(entry["status"], "ok")
+        self.assertIsNone(entry["error"])
+        self.assertEqual(calls[0][0], "WebFetch,Write")
+        self.assertEqual(calls[1][0], "Read,Write")
+        self.assertIn("Read(/", calls[1][1])
+        self.assertFalse((self.archive_dir / f"{stem}.page.txt").exists())
+
+    def test_fallback_skipped_right_before_prepare(self):
+        download = patch.object(morning_archive, "_download_page_text", side_effect=AssertionError)
+        with patch.object(morning_archive, "_detect_kind", return_value="html"), patch.object(
+            morning_archive, "_invoke_haiku", return_value="抓不到"
+        ), patch.object(morning_archive, "_fallback_allowed", return_value=False), download:
+            entry = morning_archive.archive_item(1, self.item, self.archive_dir, self.state_dir, self.workdir)
+        self.assertEqual(entry["status"], "failed")
+        self.assertIn("离 05:30 太近", entry["error"])
 
     def test_html_timeout_is_recorded_not_raised(self):
         with patch.object(morning_archive, "_detect_kind", return_value="html"), patch.object(
             morning_archive, "_invoke_haiku", side_effect=morning_archive.ArchiveTimeout("超时（120s）")
+        ), patch.object(morning_archive, "_fallback_allowed", return_value=True), patch.object(
+            morning_archive, "_download_page_text", side_effect=morning_archive.ArchiveError("本机直连失败：boom")
         ):
             entry = morning_archive.archive_item(1, self.item, self.archive_dir, self.state_dir, self.workdir)
         self.assertEqual(entry["status"], "failed")
         self.assertIn("超时", entry["error"])
+        self.assertIn("本机直连失败", entry["error"])
 
     def test_unexpected_exception_is_captured_not_propagated(self):
         with patch.object(morning_archive, "_detect_kind", side_effect=RuntimeError("糟糕")):
@@ -420,13 +467,33 @@ class TweetArchiveTests(unittest.TestCase):
             workdir.mkdir()
             # 故意不放 material 文件——模拟第1段那天没抓到这条推文
 
-            with patch.object(morning_archive, "_invoke_haiku") as invoke:
+            with patch.object(morning_archive, "_invoke_haiku") as invoke, patch.object(
+                morning_archive.scout_sources, "_http_get",
+                side_effect=morning_archive.scout_sources.ScoutSourceError("返回 HTTP 404"),
+            ):
                 entry = morning_archive.archive_item(2, REAL_X_ITEM, archive_dir, state_dir, workdir)
 
             invoke.assert_not_called()
             self.assertEqual(entry["status"], "failed")
             self.assertEqual(entry["kind"], "x_tweet")
-            self.assertIn("没有找到对应的 X 单推正文", entry["error"])
+            self.assertIn("现场补抓也失败：返回 HTTP 404", entry["error"])
+
+    def test_archive_item_x_branch_fetches_live_when_material_missing(self):
+        # 9/17 theflow0 那条：冲浪班从别处找到的推文，素材里没有，现场补抓
+        payload = json.dumps({"text": "I am stepping away from the ps5 scene.", "user": {"name": "TheFloW"},
+                              "created_at": "2026-09-15T22:21:36.000Z"}).encode()
+        with tempfile.TemporaryDirectory() as tempdir:
+            state_dir = Path(tempdir)
+            archive_dir = state_dir / "archive" / "2026-08-21"
+            archive_dir.mkdir(parents=True)
+            workdir = state_dir / "workdir"
+            workdir.mkdir()
+            with patch.object(morning_archive.scout_sources, "_http_get", return_value=payload) as get:
+                entry = morning_archive.archive_item(2, REAL_X_ITEM, archive_dir, state_dir, workdir)
+            self.assertEqual(entry["status"], "ok")
+            self.assertIn("tweet-result?id=", get.call_args.args[0])
+            target = archive_dir / Path(entry["path"]).name
+            self.assertIn("stepping away from the ps5 scene", target.read_text(encoding="utf-8"))
 
 
 class CleanupOldArchivesTests(unittest.TestCase):
@@ -616,6 +683,10 @@ class RunTests(unittest.TestCase):
         self.assertEqual(len(entries), 1)
         self.assertEqual((entries[0]["level"], entries[0]["category"]), ("warning", "activity"))
         self.assertIn("2 条里 1 条没归档成", entries[0]["message"])
+        self.assertIn("（第2条 转档流程结束但未产出文件）", entries[0]["message"])
+        # 9/24：逐条原因跟着这一条进前端日志，不用再翻服务器上的 morning_scout.log
+        self.assertEqual(entries[0]["detail"]["failed"],
+                         [{"index": 2, "kind": "html", "error": "转档流程结束但未产出文件"}])
 
     def test_run_uses_given_now_and_state_dir_and_returns_manifest(self):
         with tempfile.TemporaryDirectory() as tempdir:
@@ -625,6 +696,33 @@ class RunTests(unittest.TestCase):
         # 没有 scout 草稿文件，应该走"缺席"分支而不是抛异常
         self.assertEqual(manifest["items"], [])
         self.assertEqual(manifest["issue_date"], "2026-08-21")
+
+
+class PageTextAndCutoffTests(unittest.TestCase):
+    def test_html_to_text_drops_chrome_and_prefers_article(self):
+        body = "<p>" + "Meteor crater found in Quebec. " * 20 + "</p>"
+        html = (
+            "<html><head><style>.x{}</style><script>var a=1;</script></head><body>"
+            "<nav>Home | News | Sports</nav><header>CBC</header>"
+            f"<article><h1>Crater</h1>{body}</article>"
+            "<aside>Recommended</aside><footer>Copyright</footer></body></html>"
+        )
+        text = morning_archive.html_to_text(html)
+        self.assertTrue(text.startswith("Crater\nMeteor crater"))
+        for junk in ("var a", "Home | News", "Recommended", "Copyright", ".x{}"):
+            self.assertNotIn(junk, text)
+
+    def test_html_to_text_without_article_keeps_body(self):
+        text = morning_archive.html_to_text("<body><div>第一段</div><div>第二段&amp;</div><script>x</script></body>")
+        self.assertEqual(text, "第一段\n第二段&")
+
+    def test_fallback_cutoff_window(self):
+        tz = morning_archive.BIZ_TZ
+        allowed = morning_archive._fallback_allowed
+        self.assertTrue(allowed(datetime(2026, 9, 24, 5, 25, 59, tzinfo=tz)))
+        self.assertFalse(allowed(datetime(2026, 9, 24, 5, 26, tzinfo=tz)))
+        self.assertFalse(allowed(datetime(2026, 9, 24, 5, 29, 59, tzinfo=tz)))
+        self.assertTrue(allowed(datetime(2026, 9, 24, 10, 0, tzinfo=tz)))
 
 
 if __name__ == "__main__":
